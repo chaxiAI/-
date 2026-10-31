@@ -5,25 +5,25 @@ import AppIntents
 /// typed as "Convert to JPEG with Swivel".
 struct SwivelShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
-        AppShortcut(intent: ConvertToJPEGIntent(), phrases: ["Convert to JPEG with \(.applicationName)"],
-                    shortTitle: "Convert to JPEG", systemImageName: "photo")
-        AppShortcut(intent: CompressIntent(), phrases: ["Compress with \(.applicationName)"],
-                    shortTitle: "Compress", systemImageName: "arrow.down.right.and.arrow.up.left")
-        AppShortcut(intent: ConvertToPDFIntent(), phrases: ["Convert to PDF with \(.applicationName)"],
-                    shortTitle: "Convert to PDF", systemImageName: "doc.richtext")
+        AppShortcut(intent: ConvertToJPEGIntent(), phrases: ["使用 \(.applicationName) 转换为 JPEG"],
+                    shortTitle: "转换为 JPEG", systemImageName: "photo")
+        AppShortcut(intent: CompressIntent(), phrases: ["使用 \(.applicationName) 压缩"],
+                    shortTitle: "压缩", systemImageName: "arrow.down.right.and.arrow.up.left")
+        AppShortcut(intent: ConvertToPDFIntent(), phrases: ["使用 \(.applicationName) 转换为 PDF"],
+                    shortTitle: "转换为 PDF", systemImageName: "doc.richtext")
     }
 }
 
 /// Images → JPEG, beside the originals.
 struct ConvertToJPEGIntent: AppIntent {
-    static let title: LocalizedStringResource = "Convert to JPEG"
-    static let description = IntentDescription("Saves a JPEG copy of each image next to the original.", categoryName: "Images")
+    static let title: LocalizedStringResource = "转换为 JPEG"
+    static let description = IntentDescription("在每张原图旁保存一份 JPEG 副本。", categoryName: "图像")
 
-    @Parameter(title: "Images", supportedTypeIdentifiers: ["public.image"], requestValueDialog: "Which images?")
+    @Parameter(title: "图像", supportedTypeIdentifiers: ["public.image"], requestValueDialog: "要转换哪些图像？")
     var files: [IntentFile]
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Convert \(\.$files) to JPEG")
+        Summary("将 \(\.$files) 转换为 JPEG")
     }
 
     init() {}
@@ -33,22 +33,22 @@ struct ConvertToJPEGIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<[IntentFile]> {
-        .result(value: try await IntentConversion.run(files, firstOf: ["image.jpeg"], label: "Convert to JPEG"))
+        .result(value: try await IntentConversion.run(files, firstOf: ["image.jpeg"], label: "转换为 JPEG"))
     }
 }
 
 /// Smaller copies of images, videos, audio and PDFs, with the tool that fits each file.
 struct CompressIntent: AppIntent {
-    static let title: LocalizedStringResource = "Compress"
+    static let title: LocalizedStringResource = "压缩"
     static let description = IntentDescription(
-        "Saves a smaller copy of each image, video, audio file or PDF next to the original, at the quality set in Swivel.",
-        categoryName: "Files")
+        "按 Swivel 中设定的质量，在每个图像、视频、音频或 PDF 原文件旁保存体积更小的副本。",
+        categoryName: "文件")
 
-    @Parameter(title: "Files", supportedTypeIdentifiers: ["public.item"], requestValueDialog: "Which files?")
+    @Parameter(title: "文件", supportedTypeIdentifiers: ["public.item"], requestValueDialog: "要压缩哪些文件？")
     var files: [IntentFile]
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Compress \(\.$files)")
+        Summary("压缩 \(\.$files)")
     }
 
     init() {}
@@ -59,22 +59,22 @@ struct CompressIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ReturnsValue<[IntentFile]> {
         .result(value: try await IntentConversion.run(
-            files, firstOf: ["image.compress", "video.compress", "audio.compress", "pdf.compress"], label: "Compress"))
+            files, firstOf: ["image.compress", "video.compress", "audio.compress", "pdf.compress"], label: "压缩"))
     }
 }
 
 /// Images and text documents → PDF, beside the originals.
 struct ConvertToPDFIntent: AppIntent {
-    static let title: LocalizedStringResource = "Convert to PDF"
+    static let title: LocalizedStringResource = "转换为 PDF"
     static let description = IntentDescription(
-        "Saves a PDF of each image or document (text, RTF, HTML, Word, OpenDocument) next to the original.",
-        categoryName: "Files")
+        "在每个图像或文档（文本、RTF、HTML、Word、OpenDocument）原文件旁保存一份 PDF。",
+        categoryName: "文件")
 
-    @Parameter(title: "Files", supportedTypeIdentifiers: ["public.item"], requestValueDialog: "Which files?")
+    @Parameter(title: "文件", supportedTypeIdentifiers: ["public.item"], requestValueDialog: "要转换哪些文件？")
     var files: [IntentFile]
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Convert \(\.$files) to PDF")
+        Summary("将 \(\.$files) 转换为 PDF")
     }
 
     init() {}
@@ -84,6 +84,6 @@ struct ConvertToPDFIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<[IntentFile]> {
-        .result(value: try await IntentConversion.run(files, firstOf: ["image.pdf", "document.pdf"], label: "Convert to PDF"))
+        .result(value: try await IntentConversion.run(files, firstOf: ["image.pdf", "document.pdf"], label: "转换为 PDF"))
     }
 }
