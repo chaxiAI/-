@@ -11,7 +11,7 @@ public struct CompressVideoConverter: Converter {
     public init() {}
 
     public var id: String { "video.compress" }
-    public var title: String { "Compress" }
+    public var title: String { "压缩" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { AVAssetExportSession.allExportPresets().contains(AVAssetExportPresetHEVCHighestQuality) }
 
@@ -168,7 +168,7 @@ public struct ResizeVideoConverter: Converter {
     public var id: String { "video.resize.\(height)" }
     public var title: String { height == 2160 ? "4K" : "\(height)p" }
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Resize" }
+    public var menuGroup: String? { "调整大小" }
     public var isAvailable: Bool { AVAssetExportSession.allExportPresets().contains(preset) }
 
     public func accepts(_ input: InputFile) -> Bool {
@@ -214,7 +214,7 @@ public struct RemoveAudioConverter: Converter {
     public init() {}
 
     public var id: String { "video.removeAudio" }
-    public var title: String { "Remove Audio" }
+    public var title: String { "移除音频" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
@@ -255,7 +255,7 @@ public struct RemoveVideoMetadataConverter: Converter {
     public init() {}
 
     public var id: String { "video.stripMetadata" }
-    public var title: String { "Remove Metadata" }
+    public var title: String { "移除元数据" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
