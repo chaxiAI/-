@@ -13,7 +13,7 @@ struct ConversionMenuModel {
     var formats: [Entry] = []
     var tools: [Entry] = []
 
-    static let moreFormatsTitle = "More Formats"
+    static let moreFormatsTitle = "更多格式"
 
     /// `preferred` converter ids come first (even ones normally under
     /// "More Formats"), in the order given.
@@ -68,20 +68,20 @@ enum ConversionMenu {
         menu.autoenablesItems = false
 
         let heading = inputs.count == 1
-            ? "Convert “\(inputs[0].url.lastPathComponent)”"
-            : "Convert \(inputs.count) files"
+            ? "转换“\(inputs[0].url.lastPathComponent)”"
+            : "转换 \(inputs.count) 个文件"
         menu.addItem(header(heading))
 
         let model = ConversionMenuModel(converters: converters, preferred: preferred)
         if model.isEmpty {
-            menu.addItem(disabledItem(inputs.count == 1 ? "No conversions for this file"
-                                                        : "No conversion works for all of these files"))
+            menu.addItem(disabledItem(inputs.count == 1 ? "此文件没有可用的转换方式"
+                                                        : "没有适用于全部文件的转换方式"))
         }
         defer {
             // Actions work for any file or folder, convertible or not.
             if let onAction {
                 menu.addItem(.separator())
-                menu.addItem(header("Actions"))
+                menu.addItem(header("操作"))
                 // The system's Share item lists every service, so the
                 // wheel's Share shortcuts aren't repeated here.
                 menu.addItem(shareItem(inputs.map(\.url)))
@@ -112,7 +112,7 @@ enum ConversionMenu {
         add(model.formats, to: menu)
         if !model.tools.isEmpty {
             menu.addItem(.separator())
-            menu.addItem(header("Tools"))
+            menu.addItem(header("工具"))
             add(model.tools, to: menu)
         }
         return menu
@@ -122,7 +122,7 @@ enum ConversionMenu {
                              onPick: @escaping (any Converter) -> Void) -> NSMenuItem {
         let item = ActionMenuItem(title: converter.title) { onPick(converter) }
         if let name = OutputPreview.name(of: converter, for: inputs) {
-            item.toolTip = "Saves “\(name)” next to the original"
+            item.toolTip = "将“\(name)”保存到原文件旁"
         }
         return item
     }
