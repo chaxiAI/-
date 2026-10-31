@@ -37,7 +37,7 @@ public enum JobRunner {
         options: ConversionOptions = .default,
         progress: @escaping ProgressHandler = { _ in }
     ) async throws -> URL {
-        guard let first = inputs.first else { throw ConversionError.nothingToDo("No files to convert.") }
+        guard let first = inputs.first else { throw ConversionError.nothingToDo("没有要转换的文件。") }
         guard converter.combinesInputs || inputs.count == 1 else {
             throw ConversionError.unsupported("\(converter.title) converts one file at a time.")
         }
@@ -96,7 +96,7 @@ public enum JobRunner {
     ) async throws -> URL {
         let folder = input.url.deletingLastPathComponent()
         guard FileManager.default.isWritableFile(atPath: folder.path) else {
-            throw ConversionError.destinationNotWritable(folder, reason: "the folder is read-only")
+            throw ConversionError.destinationNotWritable(folder, reason: "文件夹为只读")
         }
         let base = spec.baseName ?? input.baseName
 
@@ -164,6 +164,6 @@ public enum JobRunner {
                 throw ConversionError.destinationNotWritable(folder, reason: String(cString: strerror(code)))
             }
         }
-        throw ConversionError.destinationNotWritable(folder, reason: "too many files with the same name")
+        throw ConversionError.destinationNotWritable(folder, reason: "存在过多同名文件")
     }
 }
