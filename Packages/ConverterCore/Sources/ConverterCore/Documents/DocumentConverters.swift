@@ -14,17 +14,17 @@ public struct TextFormat: Sendable, Hashable {
     let typeIdentifier: String
     public let isSecondary: Bool
 
-    public static let txt = TextFormat(id: "txt", title: "Plain Text", textutilName: "txt", fileExtension: "txt",
+    public static let txt = TextFormat(id: "txt", title: "纯文本", textutilName: "txt", fileExtension: "txt",
                                        typeIdentifier: "public.plain-text", isSecondary: false)
     public static let rtf = TextFormat(id: "rtf", title: "RTF", textutilName: "rtf", fileExtension: "rtf",
                                        typeIdentifier: "public.rtf", isSecondary: false)
     public static let html = TextFormat(id: "html", title: "HTML", textutilName: "html", fileExtension: "html",
                                         typeIdentifier: "public.html", isSecondary: false)
-    public static let docx = TextFormat(id: "docx", title: "Word", textutilName: "docx", fileExtension: "docx",
+    public static let docx = TextFormat(id: "docx", title: "Word 文档", textutilName: "docx", fileExtension: "docx",
                                         typeIdentifier: "org.openxmlformats.wordprocessingml.document", isSecondary: false)
-    public static let doc = TextFormat(id: "doc", title: "Word 97", textutilName: "doc", fileExtension: "doc",
+    public static let doc = TextFormat(id: "doc", title: "Word 97 文档", textutilName: "doc", fileExtension: "doc",
                                        typeIdentifier: "com.microsoft.word.doc", isSecondary: true)
-    public static let odt = TextFormat(id: "odt", title: "OpenDocument", textutilName: "odt", fileExtension: "odt",
+    public static let odt = TextFormat(id: "odt", title: "OpenDocument 文档", textutilName: "odt", fileExtension: "odt",
                                        typeIdentifier: "org.oasis-open.opendocument.text", isSecondary: true)
 
     public static let all: [TextFormat] = [txt, rtf, html, docx, doc, odt]
@@ -100,7 +100,7 @@ public struct PDFTextConverter: Converter {
     public init() {}
 
     public var id: String { "pdf.txt" }
-    public var title: String { "Plain Text" }
+    public var title: String { "纯文本" }
     public var role: ConverterRole { .format }
     public var isAvailable: Bool { true }
 
