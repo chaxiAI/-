@@ -34,7 +34,7 @@ final class RadialSnapshotTests: XCTestCase {
 
         // 2. "Resize" open with a member highlighted (tools ring).
         model.setMode(.tools)
-        let resize = try XCTUnwrap(model.slices.firstIndex { $0.title == "Resize" })
+        let resize = try XCTUnwrap(model.slices.firstIndex { $0.title == "调整大小" })
         model.hover(at: ringPoint(resize))
         model.openGroup(resize)
         let a = g.subCenterAngle(member: 1, members: model.openGroupMembers.count, parent: resize, count: model.slices.count)
@@ -44,7 +44,7 @@ final class RadialSnapshotTests: XCTestCase {
 
         // 3. The actions ring, hovering Copy Path.
         model.setMode(.actions)
-        model.hover(at: ringPoint(try XCTUnwrap(model.slices.firstIndex { $0.title == "Copy Path" })))
+        model.hover(at: ringPoint(try XCTUnwrap(model.slices.firstIndex { $0.title == "复制路径" })))
         try render(model, to: out.appendingPathComponent("radial-actions"))
 
         // 4. Share open, hovering Mail.
@@ -56,7 +56,7 @@ final class RadialSnapshotTests: XCTestCase {
 
         // 5. Crop open (tools ring).
         model.setMode(.tools)
-        let crop = try XCTUnwrap(model.slices.firstIndex { $0.title == "Crop" })
+        let crop = try XCTUnwrap(model.slices.firstIndex { $0.title == "裁剪" })
         model.hover(at: ringPoint(crop))
         model.openGroup(crop)
         try render(model, to: out.appendingPathComponent("radial-crop"))
