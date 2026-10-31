@@ -133,18 +133,18 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         guard menu === mainMenu else { return }
         menu.removeAllItems()
 
-        let open = ActionMenuItem(title: "Convert Files…", keyEquivalent: "o") { [weak self] in self?.chooseFiles() }
+        let open = ActionMenuItem(title: "转换文件…", keyEquivalent: "o") { [weak self] in self?.chooseFiles() }
         menu.addItem(open)
         menu.addItem(.separator())
 
         if queue.jobs.isEmpty {
-            menu.addItem(ConversionMenu.disabledItem("Drop files here, or drag them and tap ⇧ ⌘ ⌃"))
+            menu.addItem(ConversionMenu.disabledItem("将文件拖到这里，或拖动文件后按 ⇧ ⌘ ⌃"))
         } else {
-            menu.addItem(ConversionMenu.header("Conversions"))
+            menu.addItem(ConversionMenu.header("转换任务"))
             for job in queue.jobs {
                 menu.addItem(row(for: job))
             }
-            let clear = ActionMenuItem(title: "Clear Finished") { [weak self] in self?.queue.clearFinished() }
+            let clear = ActionMenuItem(title: "清除已完成任务") { [weak self] in self?.queue.clearFinished() }
             clear.isEnabled = queue.jobs.contains { !$0.isActive }
             menu.addItem(clear)
         }
@@ -153,9 +153,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         // group or none. Only the Settings/About group and Quit have them.
         menu.addItem(.separator())
         if let shiftDrag {
-            let toggle = ActionMenuItem(title: "Wheel While Dragging") { shiftDrag.isEnabled.toggle() }
+            let toggle = ActionMenuItem(title: "拖动时显示转盘") { shiftDrag.isEnabled.toggle() }
             toggle.state = shiftDrag.isEnabled ? .on : .off
-            toggle.toolTip = "While dragging files, tap Shift (formats), Command (tools) or Control (actions) to open the wheel."
+            toggle.toolTip = "拖动文件时，按 Shift（转换）、Command（工具）或 Control（操作）即可打开转盘。"
             menu.addItem(toggle)
         }
         #if DEBUG
@@ -164,20 +164,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
         #endif
         menu.addItem(.separator())
-        let settingsItem = ActionMenuItem(title: "Settings…", keyEquivalent: ",") { [weak self] in self?.showSettings() }
+        let settingsItem = ActionMenuItem(title: "设置…", keyEquivalent: ",") { [weak self] in self?.showSettings() }
         MenuIcons.set("gearshape", on: settingsItem)
         menu.addItem(settingsItem)
-        let welcome = ActionMenuItem(title: "How to Use Swivel…") { [weak self] in self?.showWelcome() }
+        let welcome = ActionMenuItem(title: "Swivel 使用说明…") { [weak self] in self?.showWelcome() }
         MenuIcons.set("questionmark.circle", on: welcome)
         menu.addItem(welcome)
-        let about = ActionMenuItem(title: "About Swivel") {
+        let about = ActionMenuItem(title: "关于 Swivel") {
             NSApp.activate(ignoringOtherApps: true)
             NSApp.orderFrontStandardAboutPanel(nil)
         }
         MenuIcons.set("info.circle", on: about)
         menu.addItem(about)
         menu.addItem(.separator())
-        let quit = ActionMenuItem(title: "Quit Swivel", keyEquivalent: "q") { NSApp.terminate(nil) }
+        let quit = ActionMenuItem(title: "退出 Swivel", keyEquivalent: "q") { NSApp.terminate(nil) }
         MenuIcons.set("power", on: quit)
         menu.addItem(quit)
     }
