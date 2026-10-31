@@ -11,7 +11,7 @@ public struct RemoveBackgroundConverter: Converter {
     public init() {}
 
     public var id: String { "image.removeBackground" }
-    public var title: String { "Remove Background" }
+    public var title: String { "移除背景" }
     public var role: ConverterRole { .tool }
 
     public var isAvailable: Bool {
@@ -33,7 +33,7 @@ public struct RemoveBackgroundConverter: Converter {
 
     public func convert(_ input: InputFile, to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
         guard #available(macOS 14, *) else {
-            throw ConversionError.unsupported("Remove Background needs macOS 14 or later.")
+            throw ConversionError.unsupported("移除背景需要 macOS 14 或更高版本。")
         }
         guard let info = input.image else { throw ConversionError.unreadableInput(input.url) }
         let source = try ImageCodec.openSource(input)
@@ -54,7 +54,7 @@ public struct RemoveBackgroundConverter: Converter {
         do {
             try handler.perform([request])
             guard let observation = request.results?.first, !observation.allInstances.isEmpty else {
-                throw ConversionError.nothingToDo("Couldn't find a subject to keep in \(name).")
+                throw ConversionError.nothingToDo("未能在 \(name) 中找到可保留的主体。")
             }
             buffer = try observation.generateMaskedImage(
                 ofInstances: observation.allInstances, from: handler, croppedToInstancesExtent: false)
