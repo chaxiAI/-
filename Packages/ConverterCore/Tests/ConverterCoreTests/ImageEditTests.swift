@@ -120,11 +120,11 @@ final class ImageEditTests: XCTestCase {
     }
 
     func testRotatePresets() throws {
-        XCTAssertEqual(RotateImageConverter.presets.map(\.title), ["Left", "Right", "180°", "Flip Horizontal", "Flip Vertical"])
+        XCTAssertEqual(RotateImageConverter.presets.map(\.title), ["向左", "向右", "180°", "水平翻转", "垂直翻转"])
         XCTAssertEqual(RotateImageConverter.presets.map(\.id), [
             "image.rotate.left", "image.rotate.right", "image.rotate.180", "image.flip.horizontal", "image.flip.vertical",
         ])
-        XCTAssertTrue(RotateImageConverter.presets.allSatisfy { $0.menuGroup == "Rotate" && $0.role == .tool })
+        XCTAssertTrue(RotateImageConverter.presets.allSatisfy { $0.menuGroup == "旋转" && $0.role == .tool })
     }
 
     // MARK: Remove Background
@@ -303,7 +303,7 @@ final class ImageEditTests: XCTestCase {
         XCTAssertEqual(FitImageConverter.presets.map(\.title), ["1 MB", "5 MB", "8 MB", "25 MB"])
         XCTAssertEqual(FitImageConverter.presets.map(\.id), ["image.fit.1mb", "image.fit.5mb", "image.fit.8mb", "image.fit.25mb"])
         XCTAssertEqual(FitImageConverter.presets[0].limit, 1_000_000)
-        XCTAssertTrue(FitImageConverter.presets.allSatisfy { $0.menuGroup == "Fit to Size" && $0.role == .tool })
+        XCTAssertTrue(FitImageConverter.presets.allSatisfy { $0.menuGroup == "适配尺寸" && $0.role == .tool })
         XCTAssertEqual(FitImageConverter(bytes: 250_000).title, "250 KB")
     }
 }
