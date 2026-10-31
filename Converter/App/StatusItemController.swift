@@ -39,7 +39,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
         if let button = statusItem.button {
             button.image = StatusIcon.image(progress: nil)
-            button.toolTip = "Swivel: drop files here to convert them"
+            button.toolTip = "Swivel：将文件放到这里即可转换"
             let dropView = StatusDropView(frame: button.bounds)
             dropView.autoresizingMask = [.width, .height]
             dropView.onHover = { [weak self] hovering in self?.statusItem.button?.highlight(hovering) }
@@ -107,8 +107,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
-        panel.message = "Choose files to convert. The results are saved next to them."
-        panel.prompt = "Choose"
+        panel.message = "选择要转换的文件。结果会保存在原文件旁。"
+        panel.prompt = "选择"
         guard panel.runModal() == .OK else { return }
         offerConversions(for: panel.urls)
     }
@@ -160,7 +160,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
         #if DEBUG
         if let shiftDrag {
-            menu.addItem(ActionMenuItem(title: "Preview Wheel (Debug)") { shiftDrag.previewWheel() })
+            menu.addItem(ActionMenuItem(title: "预览转盘（调试）") { shiftDrag.previewWheel() })
         }
         #endif
         menu.addItem(.separator())
