@@ -31,8 +31,8 @@ final class CropEditorController: NSObject, NSWindowDelegate {
         self.window = window
         window.contentView = NSHostingView(rootView: CropEditorView(model: model))
         title = model.$index.sink { [weak window] index in
-            window?.title = "Crop “\(images[index].url.lastPathComponent)”"
-            window?.subtitle = images.count > 1 ? "\(index + 1) of \(images.count)" : ""
+            window?.title = "裁剪“\(images[index].url.lastPathComponent)”"
+            window?.subtitle = images.count > 1 ? "第 \(index + 1) / \(images.count) 张" : ""
         }
         NSApp.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
@@ -84,7 +84,7 @@ struct CropEditorView: View {
 
     private var controls: some View {
         HStack(spacing: 12) {
-            Picker("Aspect", selection: Binding(get: { model.aspect }, set: { model.setAspect($0) })) {
+            Picker("比例", selection: Binding(get: { model.aspect }, set: { model.setAspect($0) })) {
                 ForEach(model.aspectChoices) { aspect in
                     Text(aspect.title).tag(aspect)
                 }
@@ -92,41 +92,41 @@ struct CropEditorView: View {
             .fixedSize()
 
             HStack(spacing: 4) {
-                Text("Size")
-                TextField("Width", value: Binding(get: { model.resultSize.width }, set: { model.setOutputWidth($0) }),
+                Text("尺寸")
+                TextField("宽度", value: Binding(get: { model.resultSize.width }, set: { model.setOutputWidth($0) }),
                           format: .number.grouping(.never))
                     .frame(width: 64)
                     .multilineTextAlignment(.trailing)
-                    .accessibilityLabel("Width in pixels")
+                    .accessibilityLabel("宽度（像素）")
                 Text("×").foregroundStyle(.secondary)
-                TextField("Height", value: Binding(get: { model.resultSize.height }, set: { model.setOutputHeight($0) }),
+                TextField("高度", value: Binding(get: { model.resultSize.height }, set: { model.setOutputHeight($0) }),
                           format: .number.grouping(.never))
                     .frame(width: 64)
                     .multilineTextAlignment(.trailing)
-                    .accessibilityLabel("Height in pixels")
-                Text("px").foregroundStyle(.secondary)
+                    .accessibilityLabel("高度（像素）")
+                Text("像素").foregroundStyle(.secondary)
                 if model.outputSize != nil {
                     Button { model.setOutputSize(nil) } label: {
                         Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                     }
                     .buttonStyle(.borderless)
-                    .help("Save the crop at its own size instead of scaling it")
+                    .help("按裁剪区域的原始尺寸保存，而不是缩放")
                 }
             }
             .fixedSize()
-            .help("Type a size to save the crop scaled to exactly that many pixels")
+            .help("输入尺寸可将裁剪结果缩放到精确的像素大小")
 
             Spacer(minLength: 8)
 
-            Button("Reset") { model.reset() }
+            Button("重置") { model.reset() }
                 .disabled(model.isUnchanged)
             if model.inputs.count > 1 {
-                Button("Skip") { model.skip() }
-                    .help("Leave this image as it is and show the next one")
+                Button("跳过") { model.skip() }
+                    .help("不处理这张图像并显示下一张")
             }
-            Button("Cancel", role: .cancel) { model.cancel() }
+            Button("取消", role: .cancel) { model.cancel() }
                 .keyboardShortcut(.cancelAction)
-            Button(model.hasMore ? "Crop & Next" : "Crop") { model.crop() }
+            Button(model.hasMore ? "裁剪并继续" : "裁剪") { model.crop() }
                 .keyboardShortcut(.defaultAction)
                 .disabled(model.isUnchanged)
         }
@@ -193,7 +193,7 @@ private struct CropCanvas: View {
         }
         .frame(width: area.width, height: area.height, alignment: .topLeading)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Crop area")
+        .accessibilityLabel("裁剪区域")
         .accessibilityValue("\(model.region.width) by \(model.region.height) pixels")
     }
 
