@@ -83,15 +83,15 @@ public struct CropImageConverter: Converter {
 
     public var title: String {
         switch mode {
-        case .aspect(1, 1): return "Square"
+        case .aspect(1, 1): return "正方形"
         case .aspect(let w, let h): return "\(w):\(h)"
         case .region(_, let size?): return "\(size.width) × \(size.height)"
-        case .region: return "Crop"
+        case .region: return "裁剪"
         }
     }
 
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Crop" }
+    public var menuGroup: String? { "裁剪" }
     public var isAvailable: Bool { true }
 
     /// The part of an image this crop keeps.
