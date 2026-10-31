@@ -53,10 +53,10 @@ enum ModifierKey: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .shift: return "Shift"
-        case .command: return "Command"
-        case .control: return "Control"
-        case .option: return "Option"
+        case .shift: return "Shift 键"
+        case .command: return "Command 键"
+        case .control: return "Control 键"
+        case .option: return "Option 键"
         }
     }
 
