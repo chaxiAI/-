@@ -75,9 +75,9 @@ final class CropTests: XCTestCase {
 
     func testPresetTitlesAndNames() throws {
         let photo = try input("photo.jpg")
-        XCTAssertEqual(CropImageConverter.presets.map(\.title), ["Square", "4:3", "3:2", "16:9", "3:4", "2:3", "9:16"])
+        XCTAssertEqual(CropImageConverter.presets.map(\.title), ["正方形", "4:3", "3:2", "16:9", "3:4", "2:3", "9:16"])
         XCTAssertEqual(CropImageConverter(.aspect(width: 16, height: 9)).output(for: photo).nameSuffix, " (16x9)")
-        XCTAssertTrue(CropImageConverter.presets.allSatisfy { $0.menuGroup == "Crop" && $0.role == .tool })
+        XCTAssertTrue(CropImageConverter.presets.allSatisfy { $0.menuGroup == "裁剪" && $0.role == .tool })
     }
 
     func testRegionUsesUprightPixels() async throws {
