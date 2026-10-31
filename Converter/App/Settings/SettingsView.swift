@@ -188,7 +188,7 @@ struct SettingsView: View {
 
     private var media: some View {
         Form {
-            Section("Video") {
+            Section("视频") {
                 Picker("Compress video", selection: $settings.options.videoCompression) {
                     Text("Smaller file").tag(ConversionOptions.VideoCompression.smaller)
                     Text("Balanced").tag(ConversionOptions.VideoCompression.balanced)

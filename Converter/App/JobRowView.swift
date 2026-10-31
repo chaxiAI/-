@@ -33,7 +33,7 @@ struct JobRowView: View {
     @ViewBuilder private var status: some View {
         switch job.state {
         case .queued:
-            Text("Waiting…").font(.caption).foregroundStyle(.secondary)
+            Text("等待中…").font(.caption).foregroundStyle(.secondary)
         case .running:
             ProgressView(value: job.progress)
                 .progressViewStyle(.linear)
@@ -43,7 +43,7 @@ struct JobRowView: View {
         case .failed(let message):
             Text(message).font(.caption).foregroundStyle(.red).lineLimit(1).help(message)
         case .cancelled:
-            Text("Cancelled").font(.caption).foregroundStyle(.secondary)
+            Text("已取消").font(.caption).foregroundStyle(.secondary)
         }
     }
 
