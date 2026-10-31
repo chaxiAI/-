@@ -82,15 +82,15 @@ final class RadialMenuModelTests: XCTestCase {
         let formats = model.slices.map(\.title)
         XCTAssertEqual(formats.first, "PNG")
         XCTAssertFalse(formats.contains("JPEG"))
-        XCTAssertEqual(formats.last, "More")
+        XCTAssertEqual(formats.last, "更多")
 
         model.setMode(.tools)
-        XCTAssertEqual(model.slices.map(\.title), ["Resize", "Crop", "Rotate", "Compress", "Remove Background",
-                                                   "Remove Metadata", "Recognize Text", "Archive"])
-        XCTAssertTrue(model.slices.first { $0.title == "Resize" }?.isGroup ?? false)
+        XCTAssertEqual(model.slices.map(\.title), ["调整大小", "裁剪", "旋转", "压缩", "移除背景",
+                                                   "移除元数据", "识别文本", "归档"])
+        XCTAssertTrue(model.slices.first { $0.title == "调整大小" }?.isGroup ?? false)
 
         model.setMode(.actions)
-        XCTAssertEqual(model.slices.map(\.title), ["Share", "Metadata", "Float", "Copy", "Move…", "Copy Path", "Terminal"])
+        XCTAssertEqual(model.slices.map(\.title), ["共享", "元数据", "暂存", "复制", "移到…", "复制路径", "终端"])
     }
 
     func testRotateRemoveBackgroundAndFitToSizeOnTheToolsRing() throws {
@@ -114,10 +114,10 @@ final class RadialMenuModelTests: XCTestCase {
         let model = RadialMenuModel()
         model.load([large])
         model.setMode(.tools)
-        let rotate = try XCTUnwrap(model.slices.first { $0.title == "Rotate" })
+        let rotate = try XCTUnwrap(model.slices.first { $0.title == "旋转" })
         XCTAssertEqual(rotate.symbol, "rotate.right")
         XCTAssertEqual(rotate.members.count, 5)
-        let fit = try XCTUnwrap(model.slices.first { $0.title == "Fit to Size" })
+        let fit = try XCTUnwrap(model.slices.first { $0.title == "适配尺寸" })
         XCTAssertEqual(fit.symbol, "scalemass")
         XCTAssertEqual(fit.members.count, 1, "only limits below the file's size")
         let background = try XCTUnwrap(model.slices.first { $0.title == "Remove Background" })
@@ -173,7 +173,7 @@ final class RadialMenuModelTests: XCTestCase {
         model.hover(at: point(onSlice: 1, of: model))
         guard case .action(let action) = model.target else { return XCTFail("expected an action") }
         XCTAssertEqual(action, .metadata)
-        XCTAssertEqual(model.caption.title, "Metadata")
+        XCTAssertEqual(model.caption.title, "元数据")
         XCTAssertEqual(model.caption.detail, "photo.jpg")
     }
 
@@ -201,14 +201,14 @@ final class RadialMenuModelTests: XCTestCase {
 
         model.hover(at: CGPoint(x: 3, y: 3))
         XCTAssertNil(model.target)
-        XCTAssertEqual(model.caption.title, "Cancel")
+        XCTAssertEqual(model.caption.title, "取消")
     }
 
     func testGroupsOpenASubRingAfterTheDwell() throws {
         let model = RadialMenuModel()
         model.load([photo])
         model.setMode(.tools)
-        let resize = try XCTUnwrap(model.slices.firstIndex { $0.title == "Resize" })
+        let resize = try XCTUnwrap(model.slices.firstIndex { $0.title == "调整大小" })
 
         XCTAssertEqual(model.hover(at: point(onSlice: resize, of: model)), resize, "asks for a dwell")
         XCTAssertNil(model.target, "a group alone isn't a target")
@@ -337,7 +337,7 @@ final class RadialPanelDropTests: XCTestCase {
         drag.location = windowPoint(angle: 0, radius: ringRadius)
         _ = panel.dropView.draggingEntered(drag)
         let model = panel.model
-        let more = try XCTUnwrap(model.slices.firstIndex { $0.title == "More" })
+        let more = try XCTUnwrap(model.slices.firstIndex { $0.title == "更多" })
         let g = model.geometry
         drag.location = windowPoint(angle: g.centerAngle(ofSlice: more, count: model.slices.count), radius: ringRadius)
         XCTAssertEqual(panel.dropView.draggingUpdated(drag), [], "a group isn't droppable")
