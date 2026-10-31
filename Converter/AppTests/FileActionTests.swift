@@ -113,11 +113,11 @@ final class FileActionTests: XCTestCase {
                                        onPick: { _ in }, onAction: { chosen.append($0.id) })
         let titles = menu.items.map(\.title)
         XCTAssertEqual(Array(titles.prefix(2)), ["Convert 2 files", "No conversion works for all of these files"])
-        XCTAssertEqual(Array(titles.suffix(7)), ["Share…", "Metadata", "Float", "Copy", "Move…", "Copy Path", "Terminal"])
+        XCTAssertEqual(Array(titles.suffix(7)), ["共享…", "元数据", "暂存", "复制", "移到…", "复制路径", "终端"])
         let share = try XCTUnwrap(menu.items.first { $0.title == "Share…" })
         XCTAssertNotNil(share.action, "the system's Share item opens its share sheet")
         XCTAssertNotNil(share.target, "its picker is kept alive while the menu is open")
-        let copyPath = try XCTUnwrap(menu.items.firstIndex { $0.title == "Copy Path" })
+        let copyPath = try XCTUnwrap(menu.items.firstIndex { $0.title == "复制路径" })
         menu.performActionForItem(at: copyPath)
         XCTAssertEqual(chosen, ["action.copyPath"])
     }
