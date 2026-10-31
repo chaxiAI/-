@@ -19,7 +19,7 @@ final class ServicesProvider: NSObject {
         let options: [NSPasteboard.ReadingOptionKey: Any] = [.urlReadingFileURLsOnly: true]
         let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: options) as? [URL] ?? []
         guard !urls.isEmpty else {
-            error.pointee = "Swivel needs files to convert." as NSString
+            error.pointee = "Swivel 需要要转换的文件。" as NSString
             return
         }
         // Return to the requesting app at once; the menu follows.
