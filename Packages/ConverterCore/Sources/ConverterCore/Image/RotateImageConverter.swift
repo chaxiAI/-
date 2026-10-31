@@ -41,16 +41,16 @@ public struct RotateImageConverter: Converter {
 
     public var title: String {
         switch turn {
-        case .left: return "Left"
-        case .right: return "Right"
+        case .left: return "向左"
+        case .right: return "向右"
         case .halfTurn: return "180°"
-        case .flipHorizontal: return "Flip Horizontal"
-        case .flipVertical: return "Flip Vertical"
+        case .flipHorizontal: return "水平翻转"
+        case .flipVertical: return "垂直翻转"
         }
     }
 
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Rotate" }
+    public var menuGroup: String? { "旋转" }
     public var isAvailable: Bool { true }
 
     public func accepts(_ input: InputFile) -> Bool {
