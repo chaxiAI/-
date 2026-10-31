@@ -7,7 +7,7 @@ import ConverterCore
 /// 1920 px") and the kind of file it applies to ("Images"), since several
 /// kinds have a "Compress" or a "PDF".
 struct ConversionEntity: AppEntity {
-    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Conversion")
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "转换方式")
     static let defaultQuery = ConversionQuery()
 
     let id: String
@@ -48,14 +48,14 @@ struct ConversionEntity: AppEntity {
 
         var title: String {
             switch self {
-            case .images: return "Images"
-            case .animatedImages: return "Animated images"
-            case .video: return "Video"
-            case .audio: return "Audio"
-            case .documents: return "Documents"
-            case .pdfs: return "PDFs"
-            case .archives: return "Archives"
-            case .scans: return "Images and PDFs"
+            case .images: return "图像"
+            case .animatedImages: return "动态图像"
+            case .video: return "视频"
+            case .audio: return "音频"
+            case .documents: return "文档"
+            case .pdfs: return "PDF"
+            case .archives: return "归档"
+            case .scans: return "图像和 PDF"
             }
         }
 
