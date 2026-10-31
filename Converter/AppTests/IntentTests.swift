@@ -43,8 +43,8 @@ final class IntentTests: XCTestCase {
     func testConversionsAreNamedWithTheirGroupAndKind() async throws {
         let query = ConversionEntity.defaultQuery
         let entities = try await query.entities(for: ["image.resize.1920", "image.crop.1x1", "video.compress", "image.jpeg"])
-        XCTAssertEqual(entities.map(\.name), ["Resize › 1920 px", "Crop › Square", "Compress", "JPEG"])
-        XCTAssertEqual(entities.map(\.kind), ["Images", "Images", "Video", "Images"])
+        XCTAssertEqual(entities.map(\.name), ["调整大小 › 1920 px", "裁剪 › 正方形", "压缩", "JPEG"])
+        XCTAssertEqual(entities.map(\.kind), ["图像", "图像", "视频", "图像"])
 
         let matches = try await query.entities(matching: "square").map(\.id)
         XCTAssertEqual(matches, ["image.crop.1x1"])
