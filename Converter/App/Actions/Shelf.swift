@@ -66,7 +66,7 @@ final class ShelfController: NSObject, NSWindowDelegate {
         let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 260, height: 300),
                             styleMask: [.titled, .closable, .resizable, .utilityWindow, .nonactivatingPanel],
                             backing: .buffered, defer: false)
-        panel.title = "Shelf"
+        panel.title = "暂存架"
         panel.isFloatingPanel = true
         panel.level = .floating
         panel.hidesOnDeactivate = false
@@ -100,17 +100,17 @@ struct ShelfView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text(model.items.count == 1 ? "1 item" : "\(model.items.count) items")
+                Text(model.items.count == 1 ? "1 个项目" : "\(model.items.count) 个项目")
                     .font(.callout).foregroundStyle(.secondary)
                 Spacer()
                 Button(action: onPin) {
                     Image(systemName: model.isPinned ? "pin.fill" : "pin")
                 }
                 .buttonStyle(.borderless)
-                .help(model.isPinned ? "Unpin from the screen edge" : "Pin to the screen edge")
+                .help(model.isPinned ? "取消固定到屏幕边缘" : "固定到屏幕边缘")
                 Button { model.clear() } label: { Image(systemName: "trash") }
                     .buttonStyle(.borderless)
-                    .help("Remove everything from the shelf")
+                    .help("移除暂存架中的所有项目")
                     .disabled(model.items.isEmpty)
             }
             .padding(.horizontal, 10)
@@ -121,7 +121,7 @@ struct ShelfView: View {
                     Image(systemName: "tray")
                         .font(.system(size: 28, weight: .light))
                         .foregroundStyle(.tertiary)
-                    Text("Drop files here to keep them handy.")
+                    Text("将文件放到这里，方便稍后使用。")
                         .font(.callout).foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -182,8 +182,8 @@ private struct ShelfRow: View {
             }
             .buttonStyle(.plain)
             .opacity(hovering ? 1 : 0)
-            .help("Remove from the shelf")
-            .accessibilityLabel("Remove \(url.lastPathComponent) from the shelf")
+            .help("从暂存架移除")
+            .accessibilityLabel("从暂存架移除 \(url.lastPathComponent)")
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 5)
