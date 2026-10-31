@@ -31,8 +31,8 @@ final class MetadataModel: ObservableObject {
 
     /// "JPEG image · 2.4 MB": the start of the File section.
     var summary: String {
-        let file = sections.first { $0.title == "File" }
-        return [file?["Kind"], file?["Size"].map { $0.components(separatedBy: " (").first ?? $0 }]
+        let file = sections.first { $0.title == "文件" }
+        return [file?["种类"], file?["大小"].map { $0.components(separatedBy: "（").first ?? $0 }]
             .compactMap { $0 }.joined(separator: " · ")
     }
 
@@ -54,9 +54,9 @@ final class MetadataModel: ObservableObject {
         let titles = Set(sections.map(\.title))
         let pdf = sections.first { $0.title == "PDF" }
         let candidates: [(tagged: Bool, converter: any Converter)] = [
-            (!titles.isDisjoint(with: ["Camera", "Location", "Description"]), StripImageMetadataConverter()),
-            (titles.contains("Details"), RemoveVideoMetadataConverter()),
-            (["Title", "Author", "Subject", "Keywords", "Application"].contains { pdf?[$0] != nil }, RemovePDFMetadataConverter()),
+            (!titles.isDisjoint(with: ["相机", "位置", "描述"]), StripImageMetadataConverter()),
+            (titles.contains("详细信息"), RemoveVideoMetadataConverter()),
+            (["标题", "作者", "主题", "关键词", "应用程序"].contains { pdf?[$0] != nil }, RemovePDFMetadataConverter()),
         ]
         return candidates.first { $0.tagged && $0.converter.accepts(input) }?.converter
     }
@@ -143,7 +143,7 @@ final class MetadataWindowController: NSObject, NSWindowDelegate {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 440, height: 600),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable],
                               backing: .buffered, defer: false)
-        window.subtitle = "Metadata"
+        window.subtitle = "元数据"
         window.isReleasedWhenClosed = false
         window.tabbingMode = .disallowed
         window.contentMinSize = NSSize(width: 360, height: 320)
@@ -225,22 +225,22 @@ struct MetadataView: View {
             if model.urls.count > 1 {
                 Button { model.show(model.index - 1) } label: { Image(systemName: "chevron.left") }
                     .disabled(model.index == 0)
-                    .help("Previous file")
-                    .accessibilityLabel("Previous file")
-                Text("\(model.index + 1) of \(model.urls.count)")
+                    .help("上一个文件")
+                    .accessibilityLabel("上一个文件")
+                Text("第 \(model.index + 1) / \(model.urls.count) 个")
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
                 Button { model.show(model.index + 1) } label: { Image(systemName: "chevron.right") }
                     .disabled(model.index + 1 == model.urls.count)
-                    .help("Next file")
-                    .accessibilityLabel("Next file")
+                    .help("下一个文件")
+                    .accessibilityLabel("下一个文件")
             }
             Spacer()
             if model.canRemoveMetadata {
-                Button("Remove Metadata", action: onRemoveMetadata)
-                    .help("Saves a copy without the camera, location, title, author and date tags. The original stays as it is.")
+                Button("移除元数据", action: onRemoveMetadata)
+                    .help("保存一个移除了相机、位置、标题、作者和日期标签的副本；原文件不会改变。")
             }
-            Button("Copy All", action: onCopy)
+            Button("全部复制", action: onCopy)
                 .disabled(model.sections.isEmpty)
         }
     }
