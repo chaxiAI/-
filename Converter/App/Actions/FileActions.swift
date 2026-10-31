@@ -13,20 +13,20 @@ struct FileAction: Hashable, Identifiable {
 
     static let airDrop = FileAction(id: "action.airdrop", title: "AirDrop", symbol: "dot.radiowaves.left.and.right",
                                     group: shareGroup)
-    static let mail = FileAction(id: "action.share.mail", title: "Mail", symbol: "envelope", group: shareGroup)
-    static let messages = FileAction(id: "action.share.messages", title: "Messages", symbol: "message", group: shareGroup)
-    static let notes = FileAction(id: "action.share.notes", title: "Notes", symbol: "note.text", group: shareGroup)
-    static let photos = FileAction(id: "action.share.photos", title: "Photos", symbol: "photo.on.rectangle", group: shareGroup)
+    static let mail = FileAction(id: "action.share.mail", title: "邮件", symbol: "envelope", group: shareGroup)
+    static let messages = FileAction(id: "action.share.messages", title: "信息", symbol: "message", group: shareGroup)
+    static let notes = FileAction(id: "action.share.notes", title: "备忘录", symbol: "note.text", group: shareGroup)
+    static let photos = FileAction(id: "action.share.photos", title: "照片", symbol: "photo.on.rectangle", group: shareGroup)
     /// The system's share picker, with every service and extension.
-    static let shareMore = FileAction(id: "action.share", title: "More…", symbol: "square.and.arrow.up", group: shareGroup)
-    static let metadata = FileAction(id: "action.metadata", title: "Metadata", symbol: "info.circle")
-    static let float = FileAction(id: "action.float", title: "Float", symbol: "tray")
-    static let copy = FileAction(id: "action.copy", title: "Copy", symbol: "doc.on.doc")
-    static let move = FileAction(id: "action.move", title: "Move…", symbol: "folder")
-    static let copyPath = FileAction(id: "action.copyPath", title: "Copy Path", symbol: "link")
-    static let terminal = FileAction(id: "action.terminal", title: "Terminal", symbol: "terminal")
+    static let shareMore = FileAction(id: "action.share", title: "更多…", symbol: "square.and.arrow.up", group: shareGroup)
+    static let metadata = FileAction(id: "action.metadata", title: "元数据", symbol: "info.circle")
+    static let float = FileAction(id: "action.float", title: "暂存", symbol: "tray")
+    static let copy = FileAction(id: "action.copy", title: "复制", symbol: "doc.on.doc")
+    static let move = FileAction(id: "action.move", title: "移到…", symbol: "folder")
+    static let copyPath = FileAction(id: "action.copyPath", title: "复制路径", symbol: "link")
+    static let terminal = FileAction(id: "action.terminal", title: "终端", symbol: "terminal")
 
-    static let shareGroup = "Share"
+    static let shareGroup = "共享"
     static let sharing: [FileAction] = [airDrop, mail, messages, notes, photos, shareMore]
     static let all: [FileAction] = sharing + [metadata, float, copy, move, copyPath, terminal]
 
@@ -109,9 +109,9 @@ final class FileActionPerformer {
     /// Hands the files to AirDrop, Mail, Messages, Notes or Photos.
     func share(_ urls: [URL], with action: FileAction) {
         guard let name = action.sharingService, let service = sharingService(name), service.canPerform(withItems: urls) else {
-            let advice = action == .airDrop ? "Turn on AirDrop in Control Center and try again."
-                                            : "Try More… to choose another way to share."
-            report("\(action.title) can't share these files", advice)
+            let advice = action == .airDrop ? "请在控制中心打开隔空投送后重试。"
+                                            : "请使用“更多…”选择其他共享方式。"
+            report("\(action.title)无法共享这些文件", advice)
             return
         }
         NSApp.activate(ignoringOtherApps: true)
@@ -151,7 +151,7 @@ final class FileActionPerformer {
             return nil
         }
         if !failures.isEmpty {
-            report("Some files couldn't be moved", failures.joined(separator: "\n"))
+            report("部分文件无法移动", failures.joined(separator: "\n"))
         }
         return results
     }
@@ -168,7 +168,7 @@ final class FileActionPerformer {
 
     func openInTerminal(_ urls: [URL]) {
         guard let app = settings?.terminalApp.url ?? TerminalApp.terminal.url else {
-            report("No terminal app found", "Swivel opens folders in Terminal or iTerm2.")
+            report("未找到终端应用", "Swivel 会使用终端或 iTerm2 打开文件夹。")
             return
         }
         // A handful of windows at most.
@@ -184,8 +184,8 @@ final class FileActionPerformer {
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
         panel.allowsMultipleSelection = false
-        panel.message = "Choose where to move the files."
-        panel.prompt = "Move Here"
+        panel.message = "选择要将文件移动到的位置。"
+        panel.prompt = "移到这里"
         return panel.runModal() == .OK ? panel.url : nil
     }
 
@@ -203,7 +203,7 @@ enum TerminalApp: String, CaseIterable, Identifiable {
     case terminal, iTerm
 
     var id: String { rawValue }
-    var title: String { self == .terminal ? "Terminal" : "iTerm2" }
+    var title: String { self == .terminal ? "终端" : "iTerm2" }
     var bundleIdentifier: String { self == .terminal ? "com.apple.Terminal" : "com.googlecode.iterm2" }
     var url: URL? { NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleIdentifier) }
     var isInstalled: Bool { url != nil }
