@@ -12,11 +12,11 @@ struct SettingsView: View {
 
         var title: String {
             switch self {
-            case .general: return "General"
-            case .formats: return "Formats"
-            case .images: return "Images"
-            case .media: return "Video & Audio"
-            case .documents: return "Documents"
+            case .general: return "通用"
+            case .formats: return "格式"
+            case .images: return "图像"
+            case .media: return "视频与音频"
+            case .documents: return "文档"
             }
         }
 
@@ -55,15 +55,15 @@ struct SettingsView: View {
     private var general: some View {
         Form {
             Section {
-                Toggle("Open Swivel at login", isOn: Binding(
+                Toggle("登录时打开 Swivel", isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { settings.setLaunchAtLogin($0) }))
                 if settings.loginStatus == .requiresApproval {
                     HStack {
-                        Text("Allow Swivel in Login Items to finish turning this on.")
+                        Text("请在“登录项”中允许 Swivel 完成此设置。")
                             .font(.callout).foregroundStyle(.secondary)
                         Spacer()
-                        Button("Open Login Items…") { settings.openLoginItemsSettings() }
+                        Button("打开“登录项”…") { settings.openLoginItemsSettings() }
                     }
                 }
                 if let error = settings.loginError {
@@ -71,12 +71,12 @@ struct SettingsView: View {
                 }
             }
             Section {
-                Toggle("Open the wheel while dragging files", isOn: Binding(
+                Toggle("拖动文件时打开转盘", isOn: Binding(
                     get: { shiftDrag.isEnabled },
                     set: { shiftDrag.isEnabled = $0 }))
                 ForEach(RingMode.allCases) { mode in
                     Picker(ringLabel(mode), selection: keyBinding(mode)) {
-                        Text("No key").tag(ModifierKey?.none)
+                        Text("未设置按键").tag(ModifierKey?.none)
                         ForEach(ModifierKey.allCases) { key in
                             Text("\(key.symbol)  \(key.title)").tag(ModifierKey?.some(key))
                         }
@@ -84,21 +84,21 @@ struct SettingsView: View {
                     .disabled(!shiftDrag.isEnabled)
                 }
             } header: {
-                Text("Wheel")
+                Text("转盘")
             } footer: {
-                Text("Start dragging files, then tap a key to open its ring. Tap another key, or scroll, to switch rings. The wheel stays open until you drop.")
+                Text("开始拖动文件后，轻按一个按键即可打开相应转盘。轻按其他按键或滚动鼠标可切换转盘；直到放下文件前，转盘都会保持打开。")
                     .font(.callout).foregroundStyle(.secondary)
             }
             Section {
-                Toggle("Show icon in menu bar", isOn: $settings.showMenuBarIcon)
-                Toggle("Show converted files in Finder", isOn: $settings.revealAfterConverting)
-                Picker("Open folders in", selection: $settings.terminalApp) {
+                Toggle("在菜单栏中显示图标", isOn: $settings.showMenuBarIcon)
+                Toggle("在访达中显示转换后的文件", isOn: $settings.revealAfterConverting)
+                Picker("使用以下应用打开文件夹", selection: $settings.terminalApp) {
                     ForEach(TerminalApp.allCases) { app in
-                        Text(app.isInstalled ? app.title : "\(app.title) (not installed)").tag(app)
+                        Text(app.isInstalled ? app.title : "\(app.title)（未安装）").tag(app)
                     }
                 }
             } footer: {
-                Text("Swivel works offline. Results are saved next to the original, which is never changed. With the menu bar icon hidden, open Swivel again to see these settings.")
+                Text("Swivel 可离线使用。转换结果会保存在原文件旁，原文件不会被改动。隐藏菜单栏图标后，请重新打开 Swivel 以查看这些设置。")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
@@ -107,9 +107,9 @@ struct SettingsView: View {
 
     private func ringLabel(_ mode: RingMode) -> String {
         switch mode {
-        case .formats: return "Convert formats"
-        case .tools: return "File tools"
-        case .actions: return "File actions"
+        case .formats: return "转换格式"
+        case .tools: return "文件工具"
+        case .actions: return "文件操作"
         }
     }
 
@@ -131,7 +131,7 @@ struct SettingsView: View {
             Section {
                 ForEach(FormatKind.allCases) { kind in
                     Picker(kind.title, selection: preferredBinding(kind)) {
-                        Text("Standard order").tag("")
+                        Text("默认顺序").tag("")
                         Divider()
                         ForEach(kind.choices(in: registry), id: \.id) { converter in
                             Text(converter.title).tag(converter.id)
@@ -139,7 +139,7 @@ struct SettingsView: View {
                     }
                 }
             } footer: {
-                Text("The chosen format comes first in the menu and sits at the top of the Shift-drag ring.")
+                Text("所选格式会排在菜单最前方，并显示在拖动转盘的顶部。")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
@@ -157,18 +157,18 @@ struct SettingsView: View {
     private var images: some View {
         Form {
             Section {
-                LabeledContent("JPEG, HEIC and AVIF quality") {
+                LabeledContent("JPEG、HEIC 和 AVIF 质量") {
                     percentSlider($settings.options.imageQuality, in: 0.5...1)
                 }
-                LabeledContent("Compress image") {
+                LabeledContent("压缩图像") {
                     percentSlider($settings.options.compressionQuality, in: 0.1...0.9)
                 }
             } footer: {
-                Text("Higher quality makes larger files. “Compress image” uses its own, lower setting.")
+                Text("质量越高，文件越大。“压缩图像”会使用单独且更低的质量设置。")
                     .font(.callout).foregroundStyle(.secondary)
             }
             Section {
-                Toggle("Keep camera and location details (EXIF, GPS)", isOn: $settings.options.keepMetadata)
+                Toggle("保留相机与位置信息（EXIF、GPS）", isOn: $settings.options.keepMetadata)
             }
         }
         .formStyle(.grouped)
@@ -189,29 +189,29 @@ struct SettingsView: View {
     private var media: some View {
         Form {
             Section("视频") {
-                Picker("Compress video", selection: $settings.options.videoCompression) {
-                    Text("Smaller file").tag(ConversionOptions.VideoCompression.smaller)
-                    Text("Balanced").tag(ConversionOptions.VideoCompression.balanced)
-                    Text("Better quality").tag(ConversionOptions.VideoCompression.better)
+                Picker("压缩视频", selection: $settings.options.videoCompression) {
+                    Text("文件更小").tag(ConversionOptions.VideoCompression.smaller)
+                    Text("均衡").tag(ConversionOptions.VideoCompression.balanced)
+                    Text("质量更好").tag(ConversionOptions.VideoCompression.better)
                 }
-                Picker("GIF frame rate", selection: $settings.options.gifFrameRate) {
+                Picker("GIF 帧率", selection: $settings.options.gifFrameRate) {
                     ForEach([5.0, 10, 15, 20, 30], id: \.self) { Text("\(Int($0)) fps").tag($0) }
                 }
-                Picker("GIF size", selection: $settings.options.gifMaxSide) {
+                Picker("GIF 尺寸", selection: $settings.options.gifMaxSide) {
                     ForEach([320, 480, 640, 800, 1080], id: \.self) { Text("\($0) px").tag($0) }
                 }
             }
             Section {
-                Picker("AAC bit rate", selection: $settings.options.audioBitRate) {
+                Picker("AAC 比特率", selection: $settings.options.audioBitRate) {
                     ForEach([128, 192, 256, 320], id: \.self) { Text("\($0) kbit/s").tag($0) }
                 }
-                Picker("Compress audio", selection: $settings.options.compressionAudioBitRate) {
+                Picker("压缩音频", selection: $settings.options.compressionAudioBitRate) {
                     ForEach(ConversionOptions.compressionAudioBitRates, id: \.self) { Text("\($0) kbit/s").tag($0) }
                 }
             } header: {
-                Text("Audio")
+                Text("音频")
             } footer: {
-                Text("Converting to M4A or AAC uses the first rate. “Compress audio” makes an M4A at the second, lower one.")
+                Text("转换为 M4A 或 AAC 时会使用第一个比特率；“压缩音频”会以第二个较低的比特率生成 M4A。")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
@@ -223,13 +223,13 @@ struct SettingsView: View {
     private var documents: some View {
         Form {
             Section {
-                Picker("PDF pages as images", selection: $settings.options.pdfRenderDPI) {
-                    Text("72 dpi (screen)").tag(72.0)
+                Picker("将 PDF 页面转换为图像", selection: $settings.options.pdfRenderDPI) {
+                    Text("72 dpi（屏幕）").tag(72.0)
                     Text("150 dpi").tag(150.0)
-                    Text("300 dpi (print)").tag(300.0)
+                    Text("300 dpi（打印）").tag(300.0)
                 }
             } footer: {
-                Text("Used by PDF → PNG, JPEG, HEIC and TIFF.")
+                Text("用于 PDF → PNG、JPEG、HEIC 和 TIFF。")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
