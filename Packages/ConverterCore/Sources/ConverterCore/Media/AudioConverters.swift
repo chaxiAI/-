@@ -102,7 +102,7 @@ public struct AudioConverter: Converter {
     public var role: ConverterRole { .format }
     public var isSecondary: Bool { format.isSecondary }
     /// A video's audio outputs sit together in an "Audio" submenu.
-    public var menuGroup: String? { source == .video ? "Audio" : nil }
+    public var menuGroup: String? { source == .video ? "音频" : nil }
     public var isAvailable: Bool { format.isEncodable }
 
     public func accepts(_ input: InputFile) -> Bool {
@@ -142,7 +142,7 @@ public struct CompressAudioConverter: Converter {
     public init() {}
 
     public var id: String { "audio.compress" }
-    public var title: String { "Compress" }
+    public var title: String { "压缩" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { AudioFormat.m4a.isEncodable }
 
