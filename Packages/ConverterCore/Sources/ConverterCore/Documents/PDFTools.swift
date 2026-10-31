@@ -17,7 +17,7 @@ public struct MergePDFsConverter: Converter {
     public init() {}
 
     public var id: String { "pdf.merge" }
-    public var title: String { "Merge PDFs" }
+    public var title: String { "合并 PDF" }
     public var role: ConverterRole { .tool }
     public var combinesInputs: Bool { true }
     public var minimumInputs: Int { 2 }
@@ -36,11 +36,11 @@ public struct MergePDFsConverter: Converter {
     }
 
     public func convert(_ input: InputFile, to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
-        throw ConversionError.nothingToDo("Choose two or more PDFs to merge.")
+        throw ConversionError.nothingToDo("请选择两个或更多 PDF 进行合并。")
     }
 
     public func convert(_ inputs: [InputFile], to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
-        guard inputs.count >= minimumInputs else { throw ConversionError.nothingToDo("Choose two or more PDFs to merge.") }
+        guard inputs.count >= minimumInputs else { throw ConversionError.nothingToDo("请选择两个或更多 PDF 进行合并。") }
         let merged = PDFDocument()
         let ordered = inNameOrder(inputs)
         for (index, input) in ordered.enumerated() {
@@ -64,7 +64,7 @@ public struct SplitPDFConverter: Converter {
     public init() {}
 
     public var id: String { "pdf.split" }
-    public var title: String { "Split Pages" }
+    public var title: String { "拆分页面" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
@@ -106,7 +106,7 @@ public struct CompressPDFConverter: Converter {
     public init() {}
 
     public var id: String { "pdf.compress" }
-    public var title: String { "Compress" }
+    public var title: String { "压缩" }
     public var role: ConverterRole { .tool }
 
     public var isAvailable: Bool {
@@ -123,7 +123,7 @@ public struct CompressPDFConverter: Converter {
     }
 
     public func convert(_ input: InputFile, to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
-        guard #available(macOS 13.4, *) else { throw ConversionError.unsupported("Compressing PDFs needs macOS 13.4 or later.") }
+        guard #available(macOS 13.4, *) else { throw ConversionError.unsupported("压缩 PDF 需要 macOS 13.4 或更高版本。") }
         let document = try PDFFiles.open(input)
         let written = document.write(to: destination, withOptions: [
             .saveImagesAsJPEGOption: true,
@@ -149,7 +149,7 @@ public struct RemovePDFMetadataConverter: Converter {
     public init() {}
 
     public var id: String { "pdf.stripMetadata" }
-    public var title: String { "Remove Metadata" }
+    public var title: String { "移除元数据" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
@@ -184,7 +184,7 @@ public struct CombineImagesToPDFConverter: Converter {
     public init() {}
 
     public var id: String { "image.combinePDF" }
-    public var title: String { "Combine into PDF" }
+    public var title: String { "合并为 PDF" }
     public var role: ConverterRole { .tool }
     public var combinesInputs: Bool { true }
     public var minimumInputs: Int { 2 }
@@ -203,7 +203,7 @@ public struct CombineImagesToPDFConverter: Converter {
     }
 
     public func convert(_ input: InputFile, to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
-        throw ConversionError.nothingToDo("Choose two or more images to combine.")
+        throw ConversionError.nothingToDo("请选择两张或更多图像进行合并。")
     }
 
     public func convert(_ inputs: [InputFile], to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
@@ -239,7 +239,7 @@ public struct RecognizeTextConverter: Converter {
     public init() {}
 
     public var id: String { "ocr.text" }
-    public var title: String { "Recognize Text" }
+    public var title: String { "识别文本" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
@@ -267,7 +267,7 @@ public struct RecognizeTextConverter: Converter {
         }
         let text = pages.joined(separator: "\n\u{0C}\n")
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw ConversionError.nothingToDo("No text found in \(input.url.lastPathComponent).")
+            throw ConversionError.nothingToDo("在 \(input.url.lastPathComponent) 中没有找到文本。")
         }
         try Data(text.utf8).write(to: destination)
     }
