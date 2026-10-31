@@ -43,7 +43,7 @@ public struct ResizeImageConverter: Converter {
     }
 
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Resize" }
+    public var menuGroup: String? { "调整大小" }
     public var isAvailable: Bool { true }
 
     /// Longest side of the result, or nil when the image is already small enough.
@@ -97,7 +97,7 @@ public struct CompressImageConverter: Converter {
     public init() {}
 
     public var id: String { "image.compress" }
-    public var title: String { "Compress" }
+    public var title: String { "压缩" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
@@ -139,7 +139,7 @@ public struct StripImageMetadataConverter: Converter {
     public init() {}
 
     public var id: String { "image.stripMetadata" }
-    public var title: String { "Remove Metadata" }
+    public var title: String { "移除元数据" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
