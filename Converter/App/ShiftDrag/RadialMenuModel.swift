@@ -102,7 +102,7 @@ final class RadialMenuModel: ObservableObject {
         openGroup = nil
         guard !inputs.isEmpty else {
             rings = [:]
-            phase = .unavailable("Nothing to work with")
+            phase = .unavailable("没有可处理的文件")
             return
         }
         let menu = ConversionMenuModel(converters: registry.converters(for: inputs), preferred: preferred())
@@ -119,7 +119,7 @@ final class RadialMenuModel: ObservableObject {
                 return Slice(id: index, title: converter.title, symbol: symbol(for: converter), converter: converter)
             case .group(let title, let members):
                 // Slices are narrow: the menu bar's "More Formats" is just "More" here.
-                let short = title == ConversionMenuModel.moreFormatsTitle ? "More" : title
+                let short = title == ConversionMenuModel.moreFormatsTitle ? "更多" : title
                 return Slice(id: index, title: short, symbol: symbol(forGroup: title), members: members.map(Target.convert))
             }
         }
@@ -198,26 +198,26 @@ final class RadialMenuModel: ObservableObject {
         case .unavailable(let message):
             return (message, nil)
         case .ready:
-            if hit == .center { return ("Cancel", nil) }
-            if slices.isEmpty { return (emptyMessage, "Scroll for more") }
+            if hit == .center { return ("取消", nil) }
+            if slices.isEmpty { return (emptyMessage, "滚动查看更多") }
             switch target {
             case .convert(let converter):
                 return (converter.title, OutputPreview.name(of: converter, for: inputs) ?? "\(inputs.count) files")
             case .action(let action):
-                let title = action == .shareMore ? "Share…" : action.title
-                return (title, inputs.count == 1 ? inputs[0].url.lastPathComponent : "\(inputs.count) items")
+                let title = action == .shareMore ? "共享…" : action.title
+                return (title, inputs.count == 1 ? inputs[0].url.lastPathComponent : "\(inputs.count) 个项目")
             case nil:
                 if case .slice(let index) = hit, slices[index].isGroup { return (slices[index].title, nil) }
-                return (inputs.count == 1 ? inputs[0].url.lastPathComponent : "\(inputs.count) items", nil)
+                return (inputs.count == 1 ? inputs[0].url.lastPathComponent : "\(inputs.count) 个项目", nil)
             }
         }
     }
 
     private var emptyMessage: String {
         switch mode {
-        case .formats: return inputs.count == 1 ? "No formats for this" : "No common format"
-        case .tools: return inputs.count == 1 ? "No tools for this" : "No common tool"
-        case .actions: return "No actions"
+        case .formats: return inputs.count == 1 ? "此文件没有可用格式" : "没有共同的可用格式"
+        case .tools: return inputs.count == 1 ? "此文件没有可用工具" : "没有共同的可用工具"
+        case .actions: return "没有可用操作"
         }
     }
 
@@ -247,13 +247,13 @@ final class RadialMenuModel: ObservableObject {
 
     private static func symbol(forGroup title: String) -> String? {
         switch title {
-        case "Resize": return "arrow.up.left.and.arrow.down.right"
-        case "Crop": return "crop"
-        case "Rotate": return "rotate.right"
-        case "Fit to Size": return "scalemass"
+        case "调整大小": return "arrow.up.left.and.arrow.down.right"
+        case "裁剪": return "crop"
+        case "旋转": return "rotate.right"
+        case "适配尺寸": return "scalemass"
         case FileAction.shareGroup: return "square.and.arrow.up"
-        case "Audio": return "waveform"
-        case "Archive": return "archivebox"
+        case "音频": return "waveform"
+        case "归档": return "archivebox"
         default: return "ellipsis"
         }
     }
