@@ -174,32 +174,32 @@ struct WelcomeView: View {
                         .resizable()
                         .frame(width: 56, height: 56)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Welcome to Swivel").font(.title.weight(.semibold))
-                        Text("Convert, crop, compress and share files right where they are.")
+                        Text("欢迎使用 Swivel").font(.title.weight(.semibold))
+                        Text("在原文件所在位置转换、裁剪、压缩和共享文件。")
                             .foregroundStyle(.secondary)
                     }
                 }
-                step(1, symbol: "hand.point.up.left", title: "Start dragging files",
-                     detail: "In Finder or on the desktop, as you normally would.")
-                step(2, symbol: "keyboard", title: "Tap a key", detail: keyHint)
-                step(3, symbol: "smallcircle.filled.circle", title: "Drop on a slice",
-                     detail: "The result is saved next to the original, which is never changed. Drop in the middle to cancel.")
+                step(1, symbol: "hand.point.up.left", title: "开始拖动文件",
+                     detail: "像平常一样在访达或桌面中拖动文件。")
+                step(2, symbol: "keyboard", title: "轻按一个按键", detail: keyHint)
+                step(3, symbol: "smallcircle.filled.circle", title: "放到一个扇区上",
+                     detail: "结果会保存在原文件旁，原文件不会被修改。放到中间即可取消。")
                 Divider()
                 HStack(alignment: .top, spacing: 10) {
                     Image(nsImage: StatusIcon.image(progress: nil))
                         .frame(width: 22)
-                    Text("Swivel lives in the menu bar. Drop files on its icon, or click it for Convert Files… and Settings.")
+                    Text("Swivel 位于菜单栏中。把文件拖到它的图标上，或点按图标选择“转换文件…”和“设置”。")
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .font(.callout)
-                Toggle("Open Swivel at login", isOn: Binding(
+                Toggle("登录时打开 Swivel", isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { settings.setLaunchAtLogin($0) }))
                 Spacer(minLength: 0)
                 HStack {
-                    Button("Settings…", action: openSettings)
+                    Button("设置…", action: openSettings)
                     Spacer()
-                    Button("Get Started", action: close)
+                    Button("开始使用", action: close)
                         .keyboardShortcut(.defaultAction)
                 }
             }
@@ -207,7 +207,7 @@ struct WelcomeView: View {
 
             VStack(spacing: 8) {
                 practiceWheel
-                Text("Practice here: tap \(keySymbols) or scroll to switch rings. Nothing is converted.")
+                Text("可在此练习：按 \(keySymbols) 或滚动以切换转盘。不会转换任何文件。")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -241,16 +241,16 @@ struct WelcomeView: View {
                     wheel.clearHover()
                 }
             }
-            .accessibilityHint("A practice wheel. Use the ring keys or scroll to switch rings.")
+            .accessibilityHint("这是练习转盘。使用转盘按键或滚动来切换转盘。")
     }
 
     private var keyHint: String {
         let keys = settings.ringKeys
         let parts = [RingMode.formats, .tools, .actions].compactMap { mode in
             // No break between a key's symbol and its name.
-            keys.key(for: mode).map { "\($0.symbol)\u{00A0}\($0.title) for \(mode.title)" }
+            keys.key(for: mode).map { "\($0.symbol)\u{00A0}\($0.title)：\(mode.title)" }
         }
-        return parts.isEmpty ? "No ring keys are set. Choose them in Settings." : parts.joined(separator: ", ") + "."
+        return parts.isEmpty ? "尚未设置转盘按键。请在“设置”中选择。" : parts.joined(separator: "，") + "。"
     }
 
     private var keySymbols: String {
