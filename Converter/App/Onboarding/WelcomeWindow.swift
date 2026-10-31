@@ -68,7 +68,7 @@ final class WelcomeWindowController {
         let host = NSHostingController(rootView: view)
         host.sizingOptions = [.preferredContentSize]
         let window = NSWindow(contentViewController: host)
-        window.title = "Welcome to Swivel"
+        window.title = "欢迎使用 Swivel"
         window.styleMask = [.titled, .closable, .fullSizeContentView]
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
