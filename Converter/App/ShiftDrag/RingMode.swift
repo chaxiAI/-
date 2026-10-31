@@ -8,9 +8,9 @@ enum RingMode: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .formats: return "Convert"
-        case .tools: return "Tools"
-        case .actions: return "Actions"
+        case .formats: return "转换"
+        case .tools: return "工具"
+        case .actions: return "操作"
         }
     }
 
