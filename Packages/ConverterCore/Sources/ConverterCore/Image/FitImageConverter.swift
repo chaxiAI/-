@@ -36,7 +36,7 @@ public struct FitImageConverter: Converter {
     public var title: String { Self.size(limit) }
 
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Fit to Size" }
+    public var menuGroup: String? { "适配尺寸" }
     public var isAvailable: Bool { true }
 
     /// "1 MB", "500 KB", in Finder's decimal units.
