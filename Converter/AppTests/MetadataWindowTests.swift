@@ -43,17 +43,17 @@ final class MetadataWindowTests: XCTestCase {
         let model = MetadataModel(urls: [png], loadsThumbnails: false)
         await model.loaded()
         XCTAssertFalse(model.isLoading)
-        XCTAssertEqual(model.sections.map(\.title), ["File", "Image"])
+        XCTAssertEqual(model.sections.map(\.title), ["文件", "图像"])
         XCTAssertTrue(model.summary.contains(" · "), "kind and size: \(model.summary)")
         XCTAssertFalse(model.canRemoveMetadata, "nothing to remove")
-        XCTAssertTrue(model.text.hasPrefix("photo.png\n\nFile\nKind: "))
+        XCTAssertTrue(model.text.hasPrefix("photo.png\n\n文件\n种类: "))
     }
 
     func testTaggedPhotoCanBeCleaned() async throws {
         let model = MetadataModel(urls: [try taggedPhoto()], loadsThumbnails: false)
         await model.loaded()
-        XCTAssertEqual(model.sections.map(\.title), ["File", "Image", "Camera", "Location", "Description"])
-        XCTAssertEqual(model.sections.first { $0.title == "Location" }?["Coordinates"], "51.500700, -0.124600")
+        XCTAssertEqual(model.sections.map(\.title), ["文件", "图像", "相机", "位置", "描述"])
+        XCTAssertEqual(model.sections.first { $0.title == "位置" }?["坐标"], "51.500700, -0.124600")
         XCTAssertTrue(model.canRemoveMetadata)
         XCTAssertEqual(model.metadataRemover?.id, "image.stripMetadata")
     }
@@ -72,7 +72,7 @@ final class MetadataWindowTests: XCTestCase {
     func testTaggedPDFCanBeCleaned() async throws {
         let model = MetadataModel(urls: [try taggedPDF()], loadsThumbnails: false)
         await model.loaded()
-        XCTAssertEqual(model.sections.first { $0.title == "PDF" }?["Author"], "Sam")
+        XCTAssertEqual(model.sections.first { $0.title == "PDF" }?["作者"], "Sam")
         XCTAssertEqual(model.metadataRemover?.id, "pdf.stripMetadata")
     }
 
@@ -80,18 +80,18 @@ final class MetadataWindowTests: XCTestCase {
         let movie = folder.appendingPathComponent("clip.mov"), pdf = folder.appendingPathComponent("plain.pdf")
         try Data().write(to: movie) // the choice only looks at the type and the sections
         try Data().write(to: pdf)
-        let file = MetadataSection("File", [MetadataField("Kind", "QuickTime movie")])
-        let details = MetadataSection("Details", [MetadataField("Location", "+51.5007-000.1246/")])
+        let file = MetadataSection("文件", [MetadataField("种类", "QuickTime movie")])
+        let details = MetadataSection("详细信息", [MetadataField("位置", "+51.5007-000.1246/")])
         let remover = { (sections: [MetadataSection], url: URL) throws in
             MetadataModel.remover(for: sections, input: try InputFile(url: url))?.id
         }
         XCTAssertEqual(try remover([file, details], movie), "video.stripMetadata")
-        XCTAssertNil(try remover([file, MetadataSection("Video", [MetadataField("Codec", "H.264")])], movie), "nothing recorded")
+        XCTAssertNil(try remover([file, MetadataSection("视频", [MetadataField("编解码器", "H.264")])], movie), "nothing recorded")
         XCTAssertNil(try remover([file, details], pdf), "a PDF has no recorder details")
 
-        let producer = MetadataSection("PDF", [MetadataField("Pages", "2"), MetadataField("PDF Producer", "Quartz PDFContext")])
+        let producer = MetadataSection("PDF", [MetadataField("页数", "2"), MetadataField("PDF 生成器", "Quartz PDFContext")])
         XCTAssertNil(try remover([file, producer], pdf), "every PDF names its producer; that's not worth a button")
-        let authored = MetadataSection("PDF", [MetadataField("Pages", "2"), MetadataField("Author", "Sam")])
+        let authored = MetadataSection("PDF", [MetadataField("页数", "2"), MetadataField("作者", "Sam")])
         XCTAssertEqual(try remover([file, authored], pdf), "pdf.stripMetadata")
         XCTAssertNil(try remover([file, authored], movie), "the sections and the file must agree")
     }
@@ -104,7 +104,7 @@ final class MetadataWindowTests: XCTestCase {
         model.show(1)
         XCTAssertEqual(model.url, jpeg)
         await model.loaded()
-        XCTAssertNotNil(model.sections.first { $0.title == "Camera" })
+        XCTAssertNotNil(model.sections.first { $0.title == "相机" })
         model.show(5)
         XCTAssertEqual(model.index, 1, "out of range is ignored")
     }
@@ -122,8 +122,8 @@ final class MetadataWindowTests: XCTestCase {
         await model.loaded()
         controller.copy(model.text)
         let copied = try XCTUnwrap(pasteboard.string(forType: .string))
-        XCTAssertTrue(copied.contains("Camera\nMake: Apple\nModel: iPhone 17 Pro"))
-        XCTAssertTrue(copied.contains("Caption: Evening walk"))
+        XCTAssertTrue(copied.contains("相机\n制造商: Apple\n型号: iPhone 17 Pro"))
+        XCTAssertTrue(copied.contains("说明: Evening walk"))
         XCTAssertTrue(removed.isEmpty)
     }
 
