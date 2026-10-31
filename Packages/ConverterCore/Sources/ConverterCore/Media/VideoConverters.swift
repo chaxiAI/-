@@ -168,7 +168,7 @@ public struct VideoFrameConverter: Converter {
     public init() {}
 
     public var id: String { "video.frame" }
-    public var title: String { "Save Frame" }
+    public var title: String { "保存画面" }
     public var role: ConverterRole { .tool }
     public var isAvailable: Bool { true }
 
