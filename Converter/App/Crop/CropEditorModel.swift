@@ -8,9 +8,9 @@ struct CustomCropTool: InteractiveTool {
     let open: @MainActor @Sendable ([InputFile]) -> Void
 
     var id: String { "image.crop.custom" }
-    var title: String { "Custom…" }
+    var title: String { "自定义…" }
     var role: ConverterRole { .tool }
-    var menuGroup: String? { "Crop" }
+    var menuGroup: String? { "裁剪" }
     var isAvailable: Bool { true }
 
     func accepts(_ input: InputFile) -> Bool { input.image != nil }
@@ -20,7 +20,7 @@ struct CustomCropTool: InteractiveTool {
     }
 
     func convert(_ input: InputFile, to destination: URL, options: ConversionOptions, progress: ProgressHandler) async throws {
-        throw ConversionError.unsupported("Choose the crop in the crop editor first.")
+        throw ConversionError.unsupported("请先在裁剪编辑器中选择裁剪区域。")
     }
 
     @MainActor func begin(with inputs: [InputFile]) { open(inputs) }
@@ -41,9 +41,9 @@ final class CropEditorModel: ObservableObject {
 
         var title: String {
             switch self {
-            case .free: return "Freeform"
-            case .original: return "Original"
-            case .ratio(1, 1): return "Square"
+            case .free: return "自由比例"
+            case .original: return "原始比例"
+            case .ratio(1, 1): return "正方形"
             case .ratio(let w, let h): return "\(w):\(h)"
             }
         }
