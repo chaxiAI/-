@@ -6,20 +6,20 @@ import ConverterCore
 /// results out, saved beside the originals like every other way in. For
 /// folder automations and Quick Actions that don't need the wheel.
 struct ConvertFileIntent: AppIntent {
-    static let title: LocalizedStringResource = "Convert File"
+    static let title: LocalizedStringResource = "转换文件"
     static let description = IntentDescription(
-        "Converts files with Swivel. Each result is saved next to its original; nothing is overwritten. Files the conversion doesn't apply to, and its own results, are skipped.",
-        categoryName: "Files")
+        "使用 Swivel 转换文件。每个结果都会保存在原文件旁，不会覆盖任何文件；不适用的文件和本次转换产生的结果会被跳过。",
+        categoryName: "文件")
 
-    @Parameter(title: "Files", description: "The files to convert.", supportedTypeIdentifiers: ["public.item"],
-               requestValueDialog: "Which files?")
+    @Parameter(title: "文件", description: "要转换的文件。", supportedTypeIdentifiers: ["public.item"],
+               requestValueDialog: "要转换哪些文件？")
     var files: [IntentFile]
 
-    @Parameter(title: "Conversion", description: "A format or tool from Swivel's wheel, such as JPEG or Resize › 1920 px.")
+    @Parameter(title: "转换方式", description: "Swivel 转盘中的格式或工具，例如 JPEG 或“调整大小 › 1920 px”。")
     var conversion: ConversionEntity
 
     static var parameterSummary: some ParameterSummary {
-        Summary("Convert \(\.$files) to \(\.$conversion)")
+        Summary("将 \(\.$files) 转换为 \(\.$conversion)")
     }
 
     init() {}
@@ -31,7 +31,7 @@ struct ConvertFileIntent: AppIntent {
 
     func perform() async throws -> some IntentResult & ReturnsValue<[IntentFile]> {
         guard let converter = await IntentSupport.converter(id: conversion.id) else {
-            throw ConversionIntentError("\(conversion.name) isn't available on this Mac.")
+            throw ConversionIntentError("此 Mac 无法使用 \(conversion.name)。")
         }
         // Unlike the wheel, which offers only what applies to every file, a
         // shortcut (a folder automation, say) gets whatever arrived: it
@@ -53,7 +53,7 @@ struct ConvertFileIntent: AppIntent {
         guard !convertible.isEmpty else { throw ConversionIntentError(IntentConversion.summary(skipped)) }
         guard convertible.count >= converter.minimumInputs else {
             throw ConversionIntentError(IntentConversion.summary(
-                ["\(converter.title) needs at least \(converter.minimumInputs) files."] + skipped))
+                ["\(converter.title)至少需要 \(converter.minimumInputs) 个文件。"] + skipped))
         }
         let outputs = try await IntentConversion.run([.init(converter: converter, inputs: convertible)], skipped: skipped)
         return .result(value: outputs)
