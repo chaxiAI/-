@@ -26,21 +26,21 @@ final class MetadataTests: XCTestCase {
     func testPhotoShowsCameraAndLocation() async throws {
         let url = try XCTUnwrap(fixtures["photo.jpg"]).url
         let ordered = await FileMetadata.sections(for: url).map(\.title)
-        XCTAssertEqual(ordered, ["File", "Image", "Camera", "Location"], "empty sections are left out")
+        XCTAssertEqual(ordered, ["文件", "图像", "相机", "位置"], "empty sections are left out")
 
         let info = await sections(url)
-        XCTAssertEqual(info["Image"]?["Dimensions"], "320 × 200 pixels")
-        XCTAssertEqual(info["Image"]?["Transparency"], "No")
-        XCTAssertEqual(info["Camera"]?["Make"], "TestCam")
-        XCTAssertEqual(info["Camera"]?["Model"], "One")
-        XCTAssertEqual(info["Camera"]?["Lens"], "Test Lens 50mm")
-        let taken = try XCTUnwrap(info["Camera"]?["Taken"])
+        XCTAssertEqual(info["图像"]?["尺寸"], "320 × 200 像素")
+        XCTAssertEqual(info["图像"]?["透明度"], "无")
+        XCTAssertEqual(info["相机"]?["制造商"], "TestCam")
+        XCTAssertEqual(info["相机"]?["型号"], "One")
+        XCTAssertEqual(info["相机"]?["镜头"], "Test Lens 50mm")
+        let taken = try XCTUnwrap(info["相机"]?["拍摄时间"])
         XCTAssertFalse(taken.contains("2024:05"), "the EXIF date is shown as a date, not raw")
-        XCTAssertEqual(info["Location"]?["Latitude"], "32.080000° N")
-        XCTAssertEqual(info["Location"]?["Longitude"], "34.780000° E")
-        XCTAssertEqual(info["Location"]?["Coordinates"], "32.080000, 34.780000")
-        XCTAssertTrue(info["File"]?["Size"]?.hasSuffix("bytes)") ?? false)
-        XCTAssertNotNil(info["File"]?["Kind"])
+        XCTAssertEqual(info["位置"]?["纬度"], "32.080000° N")
+        XCTAssertEqual(info["位置"]?["经度"], "34.780000° E")
+        XCTAssertEqual(info["位置"]?["坐标"], "32.080000, 34.780000")
+        XCTAssertTrue(info["文件"]?["大小"]?.hasSuffix("字节）") ?? false)
+        XCTAssertNotNil(info["文件"]?["种类"])
     }
 
     func testCameraSettingsAreReadable() async throws {
@@ -54,29 +54,29 @@ final class MetadataTests: XCTestCase {
                                     kCGImagePropertyGPSAltitude: 25, kCGImagePropertyGPSAltitudeRef: 0]
         try Samples.write([Samples.testCard()], type: "public.jpeg", to: url,
                           frameProperties: [kCGImagePropertyExifDictionary: exif, kCGImagePropertyGPSDictionary: gps])
-        let camera = await sections(url)["Camera"]
+        let camera = await sections(url)["相机"]
         XCTAssertEqual(camera?["Aperture"], "f/2.8")
         XCTAssertEqual(camera?["Exposure"], "1/250 s")
         XCTAssertEqual(camera?["ISO"], "ISO 200")
         XCTAssertEqual(camera?["Focal Length"], "50 mm (75 mm in 35 mm terms)")
         XCTAssertEqual(camera?["Flash"], "Did not fire")
         XCTAssertEqual(camera?["Exposure Bias"], "-0.7 EV")
-        let location = await sections(url)["Location"]
+        let location = await sections(url)["位置"]
         XCTAssertEqual(location?["Coordinates"], "-33.900000, 18.400000")
         XCTAssertEqual(location?["Altitude"], "25 m")
     }
 
     func testRotatedPhotoShowsItsUprightSize() async throws {
-        let image = await sections(try XCTUnwrap(fixtures["rotated.jpg"]).url)["Image"]
+        let image = await sections(try XCTUnwrap(fixtures["rotated.jpg"]).url)["图像"]
         XCTAssertEqual(image?["Dimensions"], "200 × 320 pixels")
         XCTAssertEqual(image?["Orientation"], "Rotated 90° clockwise")
     }
 
     func testImageWithoutMetadataHasNoCameraSection() async throws {
         let info = await sections(try XCTUnwrap(fixtures["alpha.png"]).url)
-        XCTAssertNil(info["Camera"])
-        XCTAssertNil(info["Location"])
-        XCTAssertEqual(info["Image"]?["Transparency"], "Yes")
+        XCTAssertNil(info["相机"])
+        XCTAssertNil(info["位置"])
+        XCTAssertEqual(info["图像"]?["透明度"], "有")
     }
 
     func testVideoAndAudioTracks() async throws {
@@ -92,9 +92,9 @@ final class MetadataTests: XCTestCase {
         try MediaSamples.writeTone(to: tone, seconds: 2, bits: 16)
         let audio = await sections(tone)
         XCTAssertEqual(audio["Media"]?["Duration"], "0:02")
-        XCTAssertEqual(audio["Audio"]?["Codec"], "PCM")
-        XCTAssertEqual(audio["Audio"]?["Sample Rate"], "44.1 kHz")
-        XCTAssertEqual(audio["Audio"]?["Channels"], "Stereo")
+        XCTAssertEqual(audio["音频"]?["编解码器"], "PCM")
+        XCTAssertEqual(audio["音频"]?["采样率"], "44.1 kHz")
+        XCTAssertEqual(audio["音频"]?["声道"], "立体声")
         XCTAssertNil(audio["Video"])
     }
 
@@ -109,11 +109,11 @@ final class MetadataTests: XCTestCase {
         let info = await sections(url)
         let pdf = info["PDF"]
         XCTAssertEqual(pdf?["Pages"], "3")
-        XCTAssertEqual(pdf?["Title"], "Quarterly Report")
-        XCTAssertEqual(pdf?["Author"], "Sam")
+        XCTAssertEqual(pdf?["标题"], "Quarterly Report")
+        XCTAssertEqual(pdf?["作者"], "Sam")
         XCTAssertEqual(pdf?["Security"], "None")
         XCTAssertNotNil(pdf?["Page Size"])
-        XCTAssertNil(info["Image"], "a PDF isn't described as an image")
+        XCTAssertNil(info["图像"], "a PDF isn't described as an image")
     }
 
     func testFolderAndDownloadSource() async throws {
@@ -124,7 +124,7 @@ final class MetadataTests: XCTestCase {
         try "b".write(to: folder.appendingPathComponent("b.txt"), atomically: true, encoding: .utf8)
 
         let folderInfo = await FileMetadata.sections(for: folder)
-        XCTAssertEqual(folderInfo.map(\.title), ["File"])
+        XCTAssertEqual(folderInfo.map(\.title), ["文件"])
         XCTAssertEqual(folderInfo.first?["Contents"], "2 items")
 
         let froms = try PropertyListSerialization.data(fromPropertyList: ["https://example.com/a.txt", ""],
@@ -134,7 +134,7 @@ final class MetadataTests: XCTestCase {
         }
         XCTAssertEqual(status, 0)
         let fileInfo = await sections(file)
-        XCTAssertEqual(fileInfo["File"]?["Downloaded From"], "https://example.com/a.txt")
+        XCTAssertEqual(fileInfo["文件"]?["下载来源"], "https://example.com/a.txt")
     }
 
     func testTextForCopying() async throws {
