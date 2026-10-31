@@ -1,0 +1,168 @@
+# Generate the Xcode project with:  make project   (runs `xcodegen` here)
+name: Converter
+options:
+  deploymentTarget:
+    macOS: "13.0"
+  # xcodegen labels .icon files "wrapper.icon"; Xcode's asset compiler only
+  # builds Icon Composer icons typed "folder.iconcomposer.icon".
+  postGenCommand: >-
+    sed -i '' 's/lastKnownFileType = wrapper.icon; path = AppIcon.icon/lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon/'
+    Converter.xcodeproj/project.pbxproj
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+packages:
+  ConverterCore:
+    path: ../Packages/ConverterCore
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    # Apple silicon only.
+    ARCHS: arm64
+    EXCLUDED_ARCHS: x86_64
+    # "Sign to Run Locally" (ad hoc) until a Developer ID is available.
+    # Shortcuts ignores an ad hoc build: it lists an app's App Intents only
+    # when the app has a team identity (Developer ID or Apple Development)
+    # and sits in /Applications or ~/Applications. The release build does.
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: YES
+    # One plain executable instead of a stub plus Swivel.debug.dylib
+    # (that split only serves SwiftUI previews).
+    ENABLE_DEBUG_DYLIB: NO
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "3"
+
+targets:
+  Converter:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+        excludes: [AppIcon.icon]
+      # Icon Composer icon (layered, Liquid Glass on macOS 26+). Added as one
+      # file so Xcode's asset compiler builds it, including images for
+      # older macOS versions.
+      - path: App/AppIcon.icon
+        type: file
+        buildPhase: resources
+    dependencies:
+      - package: ConverterCore
+        product: ConverterCore
+      # Embedded in Contents/PlugIns.
+      - target: ConverterQuickAction
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Swivel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSApplicationCategoryType: public.app-category.utilities
+        # Menu bar app: no Dock icon, no main menu.
+        LSUIElement: true
+        NSHumanReadableCopyright: "© 2026 Jonathan Lotan. MIT License."
+        # Shown when macOS asks before a result is saved in one of these
+        # places (results go next to the original).
+        NSDesktopFolderUsageDescription: Swivel saves converted files next to the originals on your Desktop.
+        NSDocumentsFolderUsageDescription: Swivel saves converted files next to the originals in Documents.
+        NSDownloadsFolderUsageDescription: Swivel saves converted files next to the originals in Downloads.
+        NSRemovableVolumesUsageDescription: Swivel saves converted files next to the originals on this drive.
+        NSNetworkVolumesUsageDescription: Swivel saves converted files next to the originals on this network volume.
+        # Lets Finder offer "Open With > Swivel" for any file (images,
+        # video, audio, documents, archives), without ever becoming the
+        # default app.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Any File
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.data]
+        # "Convert with Swivel…" in Finder's right-click > Services. An
+        # NSRequiredContext (even empty) makes it enabled by default.
+        NSServices:
+          - NSMenuItem:
+              default: Convert with Swivel…
+            NSMessage: convertFiles
+            NSPortName: Swivel
+            NSSendFileTypes: [public.item]
+            NSRequiredContext: {}
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.jonathanlotan.Swivel
+        PRODUCT_NAME: Swivel
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Not "Converter": that would clash with ConverterCore's Converter protocol.
+        PRODUCT_MODULE_NAME: ConverterApp
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_APP_SANDBOX: NO
+        INFOPLIST_KEY_LSUIElement: YES
+
+  ConverterQuickAction:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: QuickAction
+    info:
+      path: QuickAction/Info.plist
+      properties:
+        CFBundleDisplayName: Convert with Swivel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        NSExtension:
+          # A Finder Quick Action without its own window (Xcode's "Action
+          # Extension, No User Interface" template).
+          NSExtensionPointIdentifier: com.apple.services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ActionRequestHandler
+          NSExtensionAttributes:
+            NSExtensionActivationRule: >-
+              SUBQUERY(extensionItems, $item, SUBQUERY($item.attachments, $attachment,
+              ANY $attachment.registeredTypeIdentifiers UTI-CONFORMS-TO "public.item").@count >= 1).@count >= 1
+            NSExtensionServiceRoleType: NSExtensionServiceRoleTypeEditor
+            NSExtensionServiceAllowsFinderPreviewItem: true
+            NSExtensionServiceFinderPreviewIconName: NSActionTemplate
+            NSExtensionServiceAllowsTouchBarItem: false
+    entitlements:
+      path: QuickAction/QuickAction.entitlements
+      properties:
+        # Every app extension must be sandboxed.
+        com.apple.security.app-sandbox: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.jonathanlotan.Swivel.QuickAction
+        PRODUCT_NAME: ConverterQuickAction
+        GENERATE_INFOPLIST_FILE: NO
+
+  ConverterTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: AppTests
+      # The extension's logic, compiled into the tests as well.
+      - path: QuickAction/QuickActionSupport.swift
+    dependencies:
+      # ConverterCore comes from the app via TEST_HOST; linking it again
+      # would give the tests a second copy of its types and registries.
+      - target: Converter
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.jonathanlotan.SwivelTests
+        GENERATE_INFOPLIST_FILE: YES
+        # Xcode's XCTest is built for macOS 14; the app itself still targets 13.
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Swivel.app/Contents/MacOS/Swivel
+        BUNDLE_LOADER: $(TEST_HOST)
+
+schemes:
+  Converter:
+    build:
+      targets:
+        Converter: all
+        ConverterTests: [test]
+    test:
+      targets: [ConverterTests]
+    run:
+      config: Debug
