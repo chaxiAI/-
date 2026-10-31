@@ -157,10 +157,10 @@ final class CropEditorTests: XCTestCase {
         let registry = ConverterRegistry(ConverterRegistry.standard.everything + [tool])
         let menu = ConversionMenuModel(converters: registry.converters(for: [photo]))
         let crop = menu.tools.compactMap { entry -> [any Converter]? in
-            if case .group("Crop", let members) = entry { return members }
+            if case .group("裁剪", let members) = entry { return members }
             return nil
         }.first
-        XCTAssertEqual(crop?.map(\.title).last, "Custom…")
+        XCTAssertEqual(crop?.map(\.title).last, "自定义…")
 
         let queue = JobQueue()
         queue.start(tool, on: [photo])
