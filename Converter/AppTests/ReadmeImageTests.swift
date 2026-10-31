@@ -49,12 +49,12 @@ final class ReadmeImageTests: XCTestCase {
                          to: "wheel-convert.\(suffix).png")
 
             model.setMode(.tools)
-            let square = try openGroup("Crop", member: 0, of: model)
+            let square = try openGroup("裁剪", member: 0, of: model)
             try writePNG(render(WheelScene(model: model, pointer: square, icon: icon, dark: dark)),
                          to: "wheel-tools.\(suffix).png")
 
             model.setMode(.actions)
-            let mail = try openGroup("Share", member: 1, of: model)
+            let mail = try openGroup("共享", member: 1, of: model)
             try writePNG(render(WheelScene(model: model, pointer: mail, icon: icon, dark: dark)),
                          to: "wheel-actions.\(suffix).png")
 
@@ -131,7 +131,7 @@ final class ReadmeImageTests: XCTestCase {
         model.setMode(model.mode.advanced(by: 1))
         try shot("Scroll up for Actions")
         hold(0.9)
-        let share = try XCTUnwrap(model.slices.firstIndex { $0.title == "Share" })
+        let share = try XCTUnwrap(model.slices.firstIndex { $0.title == "共享" })
         try move(to: ringPoint(share, of: model), caption: "Scroll up for Actions")
         model.openGroup(share)
         try shot("Share, get info, copy, move…")
@@ -142,7 +142,7 @@ final class ReadmeImageTests: XCTestCase {
         model.setMode(model.mode.advanced(by: 1))
         try shot("Scroll up again for Tools")
         hold(0.9)
-        let crop = try XCTUnwrap(model.slices.firstIndex { $0.title == "Crop" })
+        let crop = try XCTUnwrap(model.slices.firstIndex { $0.title == "裁剪" })
         try move(to: ringPoint(crop, of: model), caption: "Resize, crop, compress…")
         model.openGroup(crop)
         try shot("Resize, crop, compress…")
@@ -231,7 +231,7 @@ final class ReadmeImageTests: XCTestCase {
                                                             registry: .standard, tab: .general))
             let size = host.fittingSize
             try writePNG(window(host, size: NSSize(width: max(size.width, 520), height: size.height),
-                                title: "General", dark: dark),
+                                title: "通用", dark: dark),
                          to: "settings.\(suffix).png")
         }
     }
