@@ -54,15 +54,15 @@ struct JobRowView: View {
                 Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
-            .help("Cancel")
-            .accessibilityLabel("Cancel \(job.title)")
+            .help("取消")
+            .accessibilityLabel("取消 \(job.title)")
         case .succeeded(let url):
             Button { onReveal(url) } label: {
                 Image(systemName: "magnifyingglass.circle.fill").foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
-            .help("Show in Finder")
-            .accessibilityLabel("Show \(url.lastPathComponent) in Finder")
+            .help("在访达中显示")
+            .accessibilityLabel("在访达中显示 \(url.lastPathComponent)")
         case .failed, .cancelled:
             EmptyView()
         }
