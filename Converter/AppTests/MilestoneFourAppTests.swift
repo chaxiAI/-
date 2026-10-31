@@ -60,7 +60,7 @@ final class RichTextPDFTests: XCTestCase {
             if case .converter(let converter) = entry { return converter.title }
             return nil
         }
-        XCTAssertEqual(titles, ["Plain Text", "HTML", "Word", "PDF"])
+        XCTAssertEqual(titles, ["纯文本", "HTML", "Word 文档", "PDF"])
     }
 }
 
@@ -143,7 +143,7 @@ final class MilestoneFourMenuTests: XCTestCase {
         XCTAssertEqual(titles(model.formats), [
             "MP4", "MP4 (HEVC)", "MOV", "GIF", "Audio: M4A, WAV, AIFF, FLAC", "More Formats: MOV (ProRes), M4V",
         ])
-        XCTAssertEqual(titles(model.tools), ["Save Frame", "Compress", "Resize: 4K, 1080p, 720p, 540p", "Remove Audio",
-                                             "Remove Metadata", "Archive: ZIP, TAR.GZ, TAR.XZ, 7Z, Apple Archive"])
+        XCTAssertEqual(titles(model.tools), ["保存画面", "压缩", "调整大小: 4K, 1080p, 720p, 540p", "移除音频",
+                                             "移除元数据", "归档: ZIP, TAR.GZ, TAR.XZ, 7Z, Apple 归档"])
     }
 }
