@@ -90,8 +90,8 @@ final class FileToolTests: XCTestCase {
         try await MediaSamples.mux(video: silent, audio: aac, to: clip, fileType: .mp4,
                                    metadata: MediaSamples.recorderMetadata())
         let before = await sections(clip)
-        XCTAssertEqual(before["Details"]?["Location"]?.hasPrefix("+32.0800+034.7800"), true, "the fixture carries a location")
-        XCTAssertEqual(before["Details"]?["Title"], "Beach")
+        XCTAssertEqual(before["详细信息"]?["位置"]?.hasPrefix("+32.0800+034.7800"), true, "the fixture carries a location")
+        XCTAssertEqual(before["详细信息"]?["标题"], "Beach")
         XCTAssertEqual(before["Video"]?["Dimensions"], "240 × 320 pixels")
         let tagged = try await AVURLAsset(url: clip).load(.metadata).map { $0.identifier?.rawValue ?? "?" }
         XCTAssertEqual(tagged.sorted(), ["uiso/date", "uiso/loci", "uiso/titl"], "MP4 keeps the tags it has ISO forms for")
@@ -99,11 +99,11 @@ final class FileToolTests: XCTestCase {
         let output = try await JobRunner.run(converter("video.stripMetadata"), on: InputFile(url: clip))
         XCTAssertEqual(output.lastPathComponent, "IMG_0042 (no metadata).mp4", "same container")
         let after = await sections(output)
-        XCTAssertNil(after["Details"], "no title, location, date, make or model left: \(after["Details"]?.fields ?? [])")
+        XCTAssertNil(after["详细信息"], "no title, location, date, make or model left: \(after["详细信息"]?.fields ?? [])")
         XCTAssertEqual(after["Media"]?["Duration"], "0:02")
         XCTAssertEqual(after["Video"]?["Dimensions"], "240 × 320 pixels", "still upright")
         XCTAssertEqual(after["Video"]?["Codec"], "H.264", "not re-encoded")
-        XCTAssertEqual(after["Audio"]?["Codec"], "AAC", "sound copied as it was")
+        XCTAssertEqual(after["音频"]?["编解码器"], "AAC", "sound copied as it was")
 
         let items = try await AVURLAsset(url: output).load(.metadata)
         XCTAssertTrue(items.isEmpty, "nothing left at all: \(items.map { $0.identifier?.rawValue ?? "?" })")
@@ -119,7 +119,7 @@ final class FileToolTests: XCTestCase {
         let left = try await AVURLAsset(url: cleaned).load(.metadata)
         XCTAssertTrue(left.isEmpty, "\(left.map { $0.identifier?.rawValue ?? "?" })")
         let cleanedInfo = await sections(cleaned)
-        XCTAssertNil(cleanedInfo["Details"])
+        XCTAssertNil(cleanedInfo["详细信息"])
         XCTAssertEqual(cleanedInfo["Video"]?["Dimensions"], "64 × 48 pixels")
     }
 
@@ -156,8 +156,8 @@ final class FileToolTests: XCTestCase {
         try MediaSamples.annotatePDF(plain, to: pdf, author: "Rae Reviewer", date: reviewed)
         try FileManager.default.removeItem(at: plain)
         let before = await sections(pdf)["PDF"]
-        XCTAssertEqual(before?["Title"], "Quarterly Report", "the fixture is tagged")
-        XCTAssertEqual(before?["Keywords"], "finance, q3")
+        XCTAssertEqual(before?["标题"], "Quarterly Report", "the fixture is tagged")
+        XCTAssertEqual(before?["关键词"], "finance, q3")
         let notes = try annotations(pdf).filter { $0.type != "Popup" }
         XCTAssertEqual(notes.count, 6, "a note and a highlight on each page")
         XCTAssertTrue(notes.allSatisfy { $0.userName == "Rae Reviewer" && $0.modificationDate == reviewed }, "signed and dated")
@@ -167,7 +167,7 @@ final class FileToolTests: XCTestCase {
         let pdfSection = await sections(output)["PDF"]
         let after = try XCTUnwrap(pdfSection)
         XCTAssertEqual(after["Pages"], "3")
-        for label in ["Title", "Author", "Subject", "Keywords", "Application"] {
+        for label in ["标题", "作者", "主题", "关键词", "应用程序"] {
             XCTAssertNil(after[label], "\(label) should be gone: \(after.fields)")
         }
         XCTAssertEqual(try XCTUnwrap(PDFDocument(url: output)).page(at: 2)?.string?.contains("Page 3"), true, "text intact")
