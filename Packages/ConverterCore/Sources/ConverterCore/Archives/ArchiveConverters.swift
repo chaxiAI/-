@@ -39,7 +39,7 @@ public struct ArchiveFormat: Sendable, Hashable {
     public static let tarGz = ArchiveFormat(id: "tar.gz", title: "TAR.GZ", fileExtension: "tar.gz", kind: .tarGz)
     public static let tarXz = ArchiveFormat(id: "tar.xz", title: "TAR.XZ", fileExtension: "tar.xz", kind: .tarXz)
     public static let sevenZip = ArchiveFormat(id: "7z", title: "7Z", fileExtension: "7z", kind: .sevenZip)
-    public static let aar = ArchiveFormat(id: "aar", title: "Apple Archive", fileExtension: "aar", kind: .aar)
+    public static let aar = ArchiveFormat(id: "aar", title: "Apple 归档", fileExtension: "aar", kind: .aar)
 
     public static let all: [ArchiveFormat] = [zip, tarGz, tarXz, sevenZip, aar]
 }
@@ -51,7 +51,7 @@ public struct ExtractArchiveConverter: Converter {
     public init() {}
 
     public var id: String { "archive.extract" }
-    public var title: String { "Extract" }
+    public var title: String { "解压" }
     public var role: ConverterRole { .format }
     public var isAvailable: Bool { true }
 
@@ -87,7 +87,7 @@ public struct CreateArchiveConverter: Converter {
     public var id: String { "archive.create.\(format.id)" }
     public var title: String { format.title }
     public var role: ConverterRole { .tool }
-    public var menuGroup: String? { "Archive" }
+    public var menuGroup: String? { "归档" }
     public var combinesInputs: Bool { true }
     public var isAvailable: Bool { true }
 
