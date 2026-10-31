@@ -29,10 +29,10 @@ enum FormatKind: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .image: return "Images"
-        case .video: return "Video"
-        case .audio: return "Audio"
-        case .document: return "Documents"
+        case .image: return "图像"
+        case .video: return "视频"
+        case .audio: return "音频"
+        case .document: return "文档"
         }
     }
 
