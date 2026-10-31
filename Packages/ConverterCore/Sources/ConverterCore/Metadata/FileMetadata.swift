@@ -65,20 +65,20 @@ public enum FileMetadata {
                                          .contentModificationDateKey, .isDirectoryKey, .tagNamesKey]
         let values = try? url.resourceValues(forKeys: keys)
         var list = Fields()
-        list.add("Kind", values?.localizedTypeDescription)
+        list.add("种类", values?.localizedTypeDescription)
         if values?.isDirectory == true {
             let count = (try? FileManager.default.contentsOfDirectory(atPath: url.path).count) ?? 0
-            list.add("Contents", count == 1 ? "1 item" : "\(count) items")
+            list.add("内容", count == 1 ? "1 个项目" : "\(count) 个项目")
         } else if let size = values?.fileSize {
             let bytes = NumberFormatter.localizedString(from: NSNumber(value: size), number: .decimal)
-            list.add("Size", "\(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file)) (\(bytes) bytes)")
+            list.add("大小", "\(ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))（\(bytes) 字节）")
         }
-        list.add("Created", values?.creationDate.map(format))
-        list.add("Modified", values?.contentModificationDate.map(format))
-        list.add("Where", (url.deletingLastPathComponent().path as NSString).abbreviatingWithTildeInPath)
-        list.add("Tags", values?.tagNames?.joined(separator: ", "))
-        list.add("Downloaded From", whereFroms(url).joined(separator: "\n"))
-        return MetadataSection("File", list.fields)
+        list.add("创建时间", values?.creationDate.map(format))
+        list.add("修改时间", values?.contentModificationDate.map(format))
+        list.add("位置", (url.deletingLastPathComponent().path as NSString).abbreviatingWithTildeInPath)
+        list.add("标签", values?.tagNames?.joined(separator: ", "))
+        list.add("下载来源", whereFroms(url).joined(separator: "\n"))
+        return MetadataSection("文件", list.fields)
     }
 
     /// The web pages a downloaded file came from, as recorded by the browser.
@@ -104,67 +104,67 @@ public enum FileMetadata {
         let iptc = props[kCGImagePropertyIPTCDictionary] as? [CFString: Any] ?? [:]
 
         var image = Fields()
-        image.add("Dimensions", "\(info.width) × \(info.height) pixels")
-        if info.orientation != 1 { image.add("Orientation", orientationNames[info.orientation]) }
-        if info.frameCount > 1 { image.add(info.isAnimated ? "Frames" : "Images", "\(info.frameCount)") }
-        image.add("Colour Model", props[kCGImagePropertyColorModel] as? String)
-        image.add("Colour Profile", props[kCGImagePropertyProfileName] as? String)
-        image.add("Depth", number(props[kCGImagePropertyDepth]).map { "\(Int($0)) bits per channel" })
-        image.add("Transparency", info.hasAlpha ? "Yes" : "No")
+        image.add("尺寸", "\(info.width) × \(info.height) 像素")
+        if info.orientation != 1 { image.add("方向", orientationNames[info.orientation]) }
+        if info.frameCount > 1 { image.add(info.isAnimated ? "帧数" : "图像数", "\(info.frameCount)") }
+        image.add("色彩模型", props[kCGImagePropertyColorModel] as? String)
+        image.add("色彩配置文件", props[kCGImagePropertyProfileName] as? String)
+        image.add("色深", number(props[kCGImagePropertyDepth]).map { "\(Int($0)) 位/通道" })
+        image.add("透明度", info.hasAlpha ? "有" : "无")
         if let x = number(props[kCGImagePropertyDPIWidth]), let y = number(props[kCGImagePropertyDPIHeight]) {
-            image.add("Resolution", x == y ? "\(trimmed(x)) dpi" : "\(trimmed(x)) × \(trimmed(y)) dpi")
+            image.add("分辨率", x == y ? "\(trimmed(x)) dpi" : "\(trimmed(x)) × \(trimmed(y)) dpi")
         }
 
         var camera = Fields()
-        camera.add("Make", tiff[kCGImagePropertyTIFFMake] as? String)
-        camera.add("Model", tiff[kCGImagePropertyTIFFModel] as? String)
-        camera.add("Lens", (exif[kCGImagePropertyExifLensModel] ?? aux[kCGImagePropertyExifAuxLensModel]) as? String)
+        camera.add("制造商", tiff[kCGImagePropertyTIFFMake] as? String)
+        camera.add("型号", tiff[kCGImagePropertyTIFFModel] as? String)
+        camera.add("镜头", (exif[kCGImagePropertyExifLensModel] ?? aux[kCGImagePropertyExifAuxLensModel]) as? String)
         if let focal = number(exif[kCGImagePropertyExifFocalLength]) {
             let film = number(exif[kCGImagePropertyExifFocalLenIn35mmFilm]).map { " (\(Int($0)) mm in 35 mm terms)" } ?? ""
-            camera.add("Focal Length", "\(trimmed(focal)) mm" + film)
+            camera.add("焦距", "\(trimmed(focal)) mm" + film)
         }
-        camera.add("Aperture", number(exif[kCGImagePropertyExifFNumber]).map { "f/\(trimmed($0))" })
-        camera.add("Exposure", number(exif[kCGImagePropertyExifExposureTime]).map(exposure))
+        camera.add("光圈", number(exif[kCGImagePropertyExifFNumber]).map { "f/\(trimmed($0))" })
+        camera.add("曝光时间", number(exif[kCGImagePropertyExifExposureTime]).map(exposure))
         camera.add("ISO", ((exif[kCGImagePropertyExifISOSpeedRatings] as? [NSNumber])?.first).map { "ISO \($0.intValue)" })
         if let bias = number(exif[kCGImagePropertyExifExposureBiasValue]), bias != 0 {
-            camera.add("Exposure Bias", String(format: "%+.1f EV", bias))
+            camera.add("曝光补偿", String(format: "%+.1f EV", bias))
         }
-        camera.add("Flash", number(exif[kCGImagePropertyExifFlash]).map { Int($0) & 1 == 1 ? "Fired" : "Did not fire" })
-        camera.add("Taken", (exif[kCGImagePropertyExifDateTimeOriginal] as? String).map {
+        camera.add("闪光灯", number(exif[kCGImagePropertyExifFlash]).map { Int($0) & 1 == 1 ? "已闪光" : "未闪光" })
+        camera.add("拍摄时间", (exif[kCGImagePropertyExifDateTimeOriginal] as? String).map {
             exifDate($0, offset: exif[kCGImagePropertyExifOffsetTimeOriginal] as? String)
         })
-        camera.add("Software", tiff[kCGImagePropertyTIFFSoftware] as? String)
+        camera.add("软件", tiff[kCGImagePropertyTIFFSoftware] as? String)
 
         var location = Fields()
         if let lat = number(gps[kCGImagePropertyGPSLatitude]), let lon = number(gps[kCGImagePropertyGPSLongitude]) {
             let north = (gps[kCGImagePropertyGPSLatitudeRef] as? String)?.uppercased() != "S"
             let east = (gps[kCGImagePropertyGPSLongitudeRef] as? String)?.uppercased() != "W"
-            location.add("Latitude", String(format: "%.6f° %@", lat, north ? "N" : "S"))
-            location.add("Longitude", String(format: "%.6f° %@", lon, east ? "E" : "W"))
+            location.add("纬度", String(format: "%.6f° %@", lat, north ? "N" : "S"))
+            location.add("经度", String(format: "%.6f° %@", lon, east ? "E" : "W"))
             // Signed decimal degrees, the form maps and search boxes accept.
-            location.add("Coordinates", String(format: "%.6f, %.6f", north ? lat : -lat, east ? lon : -lon))
+            location.add("坐标", String(format: "%.6f, %.6f", north ? lat : -lat, east ? lon : -lon))
         }
         if let altitude = number(gps[kCGImagePropertyGPSAltitude]) {
             let below = number(gps[kCGImagePropertyGPSAltitudeRef]) == 1
-            location.add("Altitude", String(format: "%.0f m", below ? -altitude : altitude))
+            location.add("海拔", String(format: "%.0f m", below ? -altitude : altitude))
         }
-        location.add("Direction", number(gps[kCGImagePropertyGPSImgDirection]).map { String(format: "%.0f°", $0) })
+        location.add("方向", number(gps[kCGImagePropertyGPSImgDirection]).map { String(format: "%.0f°", $0) })
 
         var description = Fields()
-        description.add("Title", iptc[kCGImagePropertyIPTCObjectName] as? String)
-        description.add("Caption", (iptc[kCGImagePropertyIPTCCaptionAbstract] ?? tiff[kCGImagePropertyTIFFImageDescription]) as? String)
-        description.add("Creator", strings(iptc[kCGImagePropertyIPTCByline]) ?? tiff[kCGImagePropertyTIFFArtist] as? String)
-        description.add("Copyright", (tiff[kCGImagePropertyTIFFCopyright] ?? iptc[kCGImagePropertyIPTCCopyrightNotice]) as? String)
-        description.add("Keywords", strings(iptc[kCGImagePropertyIPTCKeywords]))
+        description.add("标题", iptc[kCGImagePropertyIPTCObjectName] as? String)
+        description.add("说明", (iptc[kCGImagePropertyIPTCCaptionAbstract] ?? tiff[kCGImagePropertyTIFFImageDescription]) as? String)
+        description.add("创作者", strings(iptc[kCGImagePropertyIPTCByline]) ?? tiff[kCGImagePropertyTIFFArtist] as? String)
+        description.add("版权", (tiff[kCGImagePropertyTIFFCopyright] ?? iptc[kCGImagePropertyIPTCCopyrightNotice]) as? String)
+        description.add("关键词", strings(iptc[kCGImagePropertyIPTCKeywords]))
 
-        return [MetadataSection("Image", image.fields), MetadataSection("Camera", camera.fields),
-                MetadataSection("Location", location.fields), MetadataSection("Description", description.fields)]
+        return [MetadataSection("图像", image.fields), MetadataSection("相机", camera.fields),
+                MetadataSection("位置", location.fields), MetadataSection("描述", description.fields)]
     }
 
     static let orientationNames: [Int: String] = [
-        2: "Mirrored", 3: "Rotated 180°", 4: "Mirrored, rotated 180°",
-        5: "Mirrored, rotated 90° anticlockwise", 6: "Rotated 90° clockwise",
-        7: "Mirrored, rotated 90° clockwise", 8: "Rotated 90° anticlockwise",
+        2: "镜像", 3: "旋转 180°", 4: "镜像后旋转 180°",
+        5: "镜像后逆时针旋转 90°", 6: "顺时针旋转 90°",
+        7: "镜像后顺时针旋转 90°", 8: "逆时针旋转 90°",
     ]
 
     /// "1/250 s" for short exposures, "2 s" for long ones.
@@ -191,11 +191,11 @@ public enum FileMetadata {
         var sections: [MetadataSection] = []
 
         var media = Fields()
-        media.add("Duration", seconds > 0 ? self.duration(seconds) : nil)
+        media.add("时长", seconds > 0 ? self.duration(seconds) : nil)
         if seconds > 0, let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize {
-            media.add("Bit Rate", bitRate(Double(size) * 8 / seconds))
+            media.add("比特率", bitRate(Double(size) * 8 / seconds))
         }
-        sections.append(MetadataSection("Media", media.fields))
+        sections.append(MetadataSection("媒体", media.fields))
 
         if let track = tracks.first(where: { $0.mediaType == .video }),
            let loaded = try? await track.load(
@@ -203,11 +203,11 @@ public enum FileMetadata {
             let (size, transform, fps, rate, formats) = loaded
             var video = Fields()
             let shown = CGRect(origin: .zero, size: size).applying(transform)
-            video.add("Dimensions", "\(Int(abs(shown.width).rounded())) × \(Int(abs(shown.height).rounded())) pixels")
-            video.add("Codec", formats.first.map { codecName(CMFormatDescriptionGetMediaSubType($0)) })
-            video.add("Frame Rate", fps > 0 ? "\(trimmed(Double(fps))) fps" : nil)
-            video.add("Bit Rate", rate > 0 ? bitRate(Double(rate)) : nil)
-            sections.append(MetadataSection("Video", video.fields))
+            video.add("尺寸", "\(Int(abs(shown.width).rounded())) × \(Int(abs(shown.height).rounded())) 像素")
+            video.add("编解码器", formats.first.map { codecName(CMFormatDescriptionGetMediaSubType($0)) })
+            video.add("帧率", fps > 0 ? "\(trimmed(Double(fps))) fps" : nil)
+            video.add("比特率", rate > 0 ? bitRate(Double(rate)) : nil)
+            sections.append(MetadataSection("视频", video.fields))
         }
 
         if let track = tracks.first(where: { $0.mediaType == .audio }),
@@ -215,29 +215,29 @@ public enum FileMetadata {
             let (rate, formats) = loaded
             var audio = Fields()
             if let format = formats.first {
-                audio.add("Codec", codecName(CMFormatDescriptionGetMediaSubType(format)))
+                audio.add("编解码器", codecName(CMFormatDescriptionGetMediaSubType(format)))
                 if let basic = CMAudioFormatDescriptionGetStreamBasicDescription(format)?.pointee {
-                    audio.add("Sample Rate", basic.mSampleRate > 0 ? "\(trimmed(basic.mSampleRate / 1000)) kHz" : nil)
+                    audio.add("采样率", basic.mSampleRate > 0 ? "\(trimmed(basic.mSampleRate / 1000)) kHz" : nil)
                     let channels = Int(basic.mChannelsPerFrame)
-                    audio.add("Channels", channels == 1 ? "Mono" : channels == 2 ? "Stereo" : channels > 0 ? "\(channels)" : nil)
+                    audio.add("声道", channels == 1 ? "单声道" : channels == 2 ? "立体声" : channels > 0 ? "\(channels)" : nil)
                 }
             }
-            audio.add("Bit Rate", rate > 0 ? bitRate(Double(rate)) : nil)
-            sections.append(MetadataSection("Audio", audio.fields))
+            audio.add("比特率", rate > 0 ? bitRate(Double(rate)) : nil)
+            sections.append(MetadataSection("音频", audio.fields))
         }
 
         var details = Fields()
         let labels: [(AVMetadataKey, String)] = [
-            (.commonKeyTitle, "Title"), (.commonKeyArtist, "Artist"), (.commonKeyAlbumName, "Album"),
-            (.commonKeyCreator, "Creator"), (.commonKeyDescription, "Description"), (.commonKeyCopyrights, "Copyright"),
-            (.commonKeyCreationDate, "Recorded"), (.commonKeyMake, "Make"), (.commonKeyModel, "Model"),
-            (.commonKeySoftware, "Software"), (.commonKeyLocation, "Location"),
+            (.commonKeyTitle, "标题"), (.commonKeyArtist, "艺人"), (.commonKeyAlbumName, "专辑"),
+            (.commonKeyCreator, "创作者"), (.commonKeyDescription, "说明"), (.commonKeyCopyrights, "版权"),
+            (.commonKeyCreationDate, "录制时间"), (.commonKeyMake, "制造商"), (.commonKeyModel, "型号"),
+            (.commonKeySoftware, "软件"), (.commonKeyLocation, "位置"),
         ]
         for (key, label) in labels {
             guard let item = metadata.first(where: { $0.commonKey == key }) else { continue }
             details.add(label, try? await item.load(.stringValue))
         }
-        sections.append(MetadataSection("Details", details.fields))
+        sections.append(MetadataSection("详细信息", details.fields))
         return sections
     }
 
@@ -274,29 +274,29 @@ public enum FileMetadata {
             strings(attributes[key]) ?? (attributes[key] as? String)
         }
         var pdf = Fields()
-        pdf.add("Pages", "\(document.pageCount)")
+        pdf.add("页数", "\(document.pageCount)")
         if let page = document.page(at: 0) {
             let box = page.bounds(for: .mediaBox)
             let metric = Locale.current.measurementSystem != .us
             let (w, h) = metric ? (box.width / 72 * 25.4, box.height / 72 * 25.4) : (box.width / 72, box.height / 72)
-            pdf.add("Page Size", String(format: metric ? "%.0f × %.0f mm" : "%.2f × %.2f in", w, h))
+            pdf.add("页面大小", String(format: metric ? "%.0f × %.0f mm" : "%.2f × %.2f in", w, h))
         }
-        pdf.add("PDF Version", "\(document.majorVersion).\(document.minorVersion)")
-        pdf.add("Title", text(.titleAttribute))
-        pdf.add("Author", text(.authorAttribute))
-        pdf.add("Subject", text(.subjectAttribute))
-        pdf.add("Keywords", text(.keywordsAttribute))
-        pdf.add("Application", text(.creatorAttribute))
-        pdf.add("PDF Producer", text(.producerAttribute))
-        pdf.add("Created", (attributes[PDFDocumentAttribute.creationDateAttribute] as? Date).map(format))
-        pdf.add("Modified", (attributes[PDFDocumentAttribute.modificationDateAttribute] as? Date).map(format))
-        pdf.add("Security", document.isLocked ? "Needs a password to open"
-                                              : document.isEncrypted ? "Encrypted" : "None")
+        pdf.add("PDF 版本", "\(document.majorVersion).\(document.minorVersion)")
+        pdf.add("标题", text(.titleAttribute))
+        pdf.add("作者", text(.authorAttribute))
+        pdf.add("主题", text(.subjectAttribute))
+        pdf.add("关键词", text(.keywordsAttribute))
+        pdf.add("应用程序", text(.creatorAttribute))
+        pdf.add("PDF 生成器", text(.producerAttribute))
+        pdf.add("创建时间", (attributes[PDFDocumentAttribute.creationDateAttribute] as? Date).map(format))
+        pdf.add("修改时间", (attributes[PDFDocumentAttribute.modificationDateAttribute] as? Date).map(format))
+        pdf.add("安全性", document.isLocked ? "需要密码才能打开"
+                                              : document.isEncrypted ? "已加密" : "无")
         if !document.isLocked {
             var limits: [String] = []
-            if !document.allowsPrinting { limits.append("printing") }
-            if !document.allowsCopying { limits.append("copying") }
-            if !limits.isEmpty { pdf.add("Restrictions", "No " + limits.joined(separator: " or ")) }
+            if !document.allowsPrinting { limits.append("打印") }
+            if !document.allowsCopying { limits.append("复制") }
+            if !limits.isEmpty { pdf.add("限制", "不允许" + limits.joined(separator: "或")) }
         }
         return [MetadataSection("PDF", pdf.fields)]
     }
