@@ -36,10 +36,10 @@ final class ConversionMenuModelTests: XCTestCase {
             "Resize: 50%, 25%, 1920 px, 1280 px, 640 px",
             "Crop: Square, 4:3, 3:2, 16:9, 3:4, 2:3, 9:16",
             "Rotate: Left, Right, 180°, Flip Horizontal, Flip Vertical",
-            "Compress",
+            "压缩",
             "Remove Background",
-            "Remove Metadata",
-            "Recognize Text",
+            "移除元数据",
+            "识别文本",
             "Archive: ZIP, TAR.GZ, TAR.XZ, 7Z, Apple Archive",
         ])
     }
@@ -58,7 +58,7 @@ final class ConversionMenuModelTests: XCTestCase {
         XCTAssertEqual(menu.items.filter(\.isSectionHeader).map(\.title), ["Convert “photo.png”", "Tools"])
         let jpeg = try XCTUnwrap(menu.items.first { $0.title == "JPEG" })
         XCTAssertEqual(jpeg.toolTip, "Saves “photo 2.jpg” next to the original")
-        let more = try XCTUnwrap(menu.items.first { $0.title == "More Formats" }?.submenu)
+        let more = try XCTUnwrap(menu.items.first { $0.title == "更多格式" }?.submenu)
         XCTAssertTrue(more.items.map(\.title).contains("ICO"))
 
         menu.performActionForItem(at: try XCTUnwrap(menu.items.firstIndex(of: jpeg)))
